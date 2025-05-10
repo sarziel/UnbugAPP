@@ -24,134 +24,147 @@
 </head>
 <body class="light-theme">
     {% if current_user.is_authenticated %}
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">
-                <img src="{{ url_for('static', filename='assets/logo.svg') }}" alt="Unbug Solutions TI Logo" class="nav-logo">
-                Unbug Solutions TI
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path.startswith('/dashboard') %}active{% endif %}" href="{{ url_for('dashboard.index') }}">
-                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if request.path.startswith('/orders') %}active{% endif %}" href="#" id="ordersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-clipboard-list me-1"></i> Ordens & Projetos
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="ordersDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('orders.index') }}">Ordens de Serviço</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('orders.create_order') }}">Nova Ordem</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('orders.projects') }}">Projetos</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('orders.create_project') }}">Novo Projeto</a></li>
-                        </ul>
-                    </li>
-                    {% if current_user.has_finance_access() %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if request.path.startswith('/finance') %}active{% endif %}" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-money-bill-wave me-1"></i> Finanças
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="financeDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('finance.index') }}">Visão Geral</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('finance.create_entry') }}">Novo Lançamento</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('finance.sales') }}">Vendas</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('finance.purchases') }}">Compras</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if request.path.startswith('/clients') %}active{% endif %}" href="#" id="clientsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-users me-1"></i> Clientes & Fornecedores
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="clientsDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('clients.index') }}">Clientes</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('clients.create_client') }}">Novo Cliente</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('clients.suppliers') }}">Fornecedores</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('clients.create_supplier') }}">Novo Fornecedor</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if request.path.startswith('/inventory') %}active{% endif %}" href="#" id="inventoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-boxes me-1"></i> Inventário
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="inventoryDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('inventory.index') }}">Estoque</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('inventory.create_item') }}">Novo Item</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('inventory.store') }}">Loja Web</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if request.path.startswith('/employees') %}active{% endif %}" href="#" id="employeesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-id-card me-1"></i> Funcionários
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="employeesDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('employees.index') }}">Listar Todos</a></li>
-                            {% if current_user.is_management() %}
-                            <li><a class="dropdown-item" href="{{ url_for('employees.create') }}">Novo Funcionário</a></li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    {% if current_user.has_security_access() %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path.startswith('/security') %}active{% endif %}" href="{{ url_for('security.index') }}">
-                            <i class="fas fa-shield-alt me-1"></i> Segurança
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <button id="theme-toggle" class="theme-toggle">
-                            <i id="theme-icon" class="fas fa-moon"></i>
-                        </button>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-1"></i> {{ current_user.username }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('auth.change_password') }}">Alterar Senha</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sair</a></li>
-                        </ul>
-                    </li>
-                </ul>
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <img src="{{ url_for('static', filename='assets/logo.svg') }}" alt="Unbug Solutions TI Logo">
+                <span>Unbug Solutions</span>
             </div>
         </div>
-    </nav>
+        
+        <ul class="sidebar-nav">
+            <li class="nav-item">
+                <a href="{{ url_for('dashboard.index') }}" class="{% if request.path.startswith('/dashboard') %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            
+            <li class="nav-item-header">Operações</li>
+            
+            <li class="nav-item">
+                <a href="#" class="has-submenu {% if request.path.startswith('/orders') %}active{% endif %}">
+                    <i class="fas fa-clipboard-list"></i> Ordens & Projetos
+                </a>
+            </li>
+            <ul class="nav-submenu {% if request.path.startswith('/orders') %}show{% endif %}">
+                <li><a href="{{ url_for('orders.index') }}">Ordens de Serviço</a></li>
+                <li><a href="{{ url_for('orders.create_order') }}">Nova Ordem</a></li>
+                <li><a href="{{ url_for('orders.projects') }}">Projetos</a></li>
+                <li><a href="{{ url_for('orders.create_project') }}">Novo Projeto</a></li>
+            </ul>
+            
+            {% if current_user.has_finance_access() %}
+            <li class="nav-item">
+                <a href="#" class="has-submenu {% if request.path.startswith('/finance') %}active{% endif %}">
+                    <i class="fas fa-money-bill-wave"></i> Finanças
+                </a>
+            </li>
+            <ul class="nav-submenu {% if request.path.startswith('/finance') %}show{% endif %}">
+                <li><a href="{{ url_for('finance.index') }}">Visão Geral</a></li>
+                <li><a href="{{ url_for('finance.create_entry') }}">Novo Lançamento</a></li>
+                <li><a href="{{ url_for('finance.sales') }}">Vendas</a></li>
+                <li><a href="{{ url_for('finance.purchases') }}">Compras</a></li>
+            </ul>
+            {% endif %}
+            
+            <li class="nav-item-header">Entidades</li>
+            
+            <li class="nav-item">
+                <a href="#" class="has-submenu {% if request.path.startswith('/clients') %}active{% endif %}">
+                    <i class="fas fa-users"></i> Clientes & Fornecedores
+                </a>
+            </li>
+            <ul class="nav-submenu {% if request.path.startswith('/clients') %}show{% endif %}">
+                <li><a href="{{ url_for('clients.index') }}">Clientes</a></li>
+                <li><a href="{{ url_for('clients.create_client') }}">Novo Cliente</a></li>
+                <li><a href="{{ url_for('clients.suppliers') }}">Fornecedores</a></li>
+                <li><a href="{{ url_for('clients.create_supplier') }}">Novo Fornecedor</a></li>
+            </ul>
+            
+            <li class="nav-item">
+                <a href="#" class="has-submenu {% if request.path.startswith('/inventory') %}active{% endif %}">
+                    <i class="fas fa-boxes"></i> Inventário
+                </a>
+            </li>
+            <ul class="nav-submenu {% if request.path.startswith('/inventory') %}show{% endif %}">
+                <li><a href="{{ url_for('inventory.index') }}">Estoque</a></li>
+                <li><a href="{{ url_for('inventory.create_item') }}">Novo Item</a></li>
+                <li><a href="{{ url_for('inventory.store') }}">Loja Web</a></li>
+            </ul>
+            
+            <li class="nav-item">
+                <a href="#" class="has-submenu {% if request.path.startswith('/employees') %}active{% endif %}">
+                    <i class="fas fa-id-card"></i> Funcionários
+                </a>
+            </li>
+            <ul class="nav-submenu {% if request.path.startswith('/employees') %}show{% endif %}">
+                <li><a href="{{ url_for('employees.index') }}">Listar Todos</a></li>
+                {% if current_user.is_management() %}
+                <li><a href="{{ url_for('employees.create') }}">Novo Funcionário</a></li>
+                {% endif %}
+            </ul>
+            
+            {% if current_user.has_security_access() %}
+            <li class="nav-item-header">Sistema</li>
+            
+            <li class="nav-item">
+                <a href="{{ url_for('security.index') }}" class="{% if request.path.startswith('/security') %}active{% endif %}">
+                    <i class="fas fa-shield-alt"></i> Segurança
+                </a>
+            </li>
+            {% endif %}
+            
+            <li class="nav-item-header">Usuário</li>
+            
+            <li class="nav-item">
+                <a href="{{ url_for('auth.change_password') }}">
+                    <i class="fas fa-key"></i> Alterar Senha
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="{{ url_for('auth.logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </a>
+            </li>
+        </ul>
+        
+        <div class="mt-4 text-center">
+            <button id="theme-toggle" class="btn btn-sm btn-dark">
+                <i id="theme-icon" class="fas fa-moon"></i> Alternar Tema
+            </button>
+        </div>
+    </div>
+    
+    <!-- Sidebar Toggler for mobile -->
+    <button id="sidebar-toggler" class="sidebar-toggler">
+        <i class="fas fa-bars"></i>
+    </button>
     {% endif %}
     
     <!-- Main Content -->
-    <main class="container py-4">
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        <!-- Page Content -->
-        {% block content %}{% endblock %}
-    </main>
+    <div class="main-content">
+        <main class="container py-4">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Page Content -->
+            {% block content %}{% endblock %}
+        </main>
     
-    <!-- Footer -->
-    {% if current_user.is_authenticated %}
-    <footer class="mt-5">
+        <!-- Footer -->
+        {% if current_user.is_authenticated %}
+        <footer class="mt-5">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
@@ -184,8 +197,9 @@
                 </div>
             </div>
         </div>
-    </footer>
-    {% endif %}
+        </footer>
+        {% endif %}
+    </div> <!-- Fecha main-content -->
     
     <!-- Bootstrap JS with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

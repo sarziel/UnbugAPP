@@ -23,7 +23,7 @@ def login():
         
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
-            flash('Login realizado com sucesso!', 'success')
+            flash(f'Bem vindo, {user.username}!', 'success')
             
             # Check if there's a 'next' parameter in the request, redirecting to that page if it exists
             next_page = request.args.get('next')

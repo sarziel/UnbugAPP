@@ -10,6 +10,31 @@ document.addEventListener('DOMContentLoaded', function() {
     var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl)
     });
+    
+    // Sidebar toggler
+    const sidebarToggler = document.getElementById('sidebar-toggler');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (sidebarToggler && sidebar) {
+        sidebarToggler.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            this.classList.toggle('open');
+        });
+    }
+    
+    // Sidebar submenu toggle
+    const hasSubmenuItems = document.querySelectorAll('.has-submenu');
+    
+    hasSubmenuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (e.target === this || e.target.parentElement === this) {
+                e.preventDefault();
+                this.classList.toggle('open');
+                const submenu = this.nextElementSibling;
+                submenu.classList.toggle('show');
+            }
+        });
+    });
 
     // Confirm delete
     const deleteButtons = document.querySelectorAll('.delete-btn');
