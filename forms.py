@@ -31,6 +31,30 @@ class UserForm(FlaskForm):
     submit = SubmitField('Salvar')
 
 class EmployeeForm(FlaskForm):
+    username = StringField('Nome de Usuário', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Senha', validators=[Optional(), Length(min=6)])
+    role = SelectField('Nível de Acesso', choices=[
+        ('admin', 'Administrador'),
+        ('management', 'Gerência'),
+        ('employee', 'Funcionário')
+    ])
+    first_name = StringField('Nome', validators=[DataRequired()])
+    last_name = StringField('Sobrenome', validators=[DataRequired()])
+    position = StringField('Cargo', validators=[DataRequired()])
+    department = StringField('Departamento', validators=[DataRequired()])
+    phone = StringField('Telefone', validators=[DataRequired()])
+    hire_date = DateField('Data de Contratação', validators=[DataRequired()])
+    active = BooleanField('Ativo')
+    submit = SubmitField('Salvar')
+
+class EditEmployeeForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    role = SelectField('Nível de Acesso', choices=[
+        ('admin', 'Administrador'),
+        ('management', 'Gerência'),
+        ('employee', 'Funcionário')
+    ])
     first_name = StringField('Nome', validators=[DataRequired()])
     last_name = StringField('Sobrenome', validators=[DataRequired()])
     position = StringField('Cargo', validators=[DataRequired()])
