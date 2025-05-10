@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}Gerenciamento de Usuários | Unbug Solutions TI{% endblock %}
@@ -147,23 +148,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Obter departamentos únicos
-    const departments = [...new Set([
+    // Dados para gráfico de departamentos
+    const departments = [
         {% for user in users %}
             {% if user.employee and user.employee.department %}
                 "{{ user.employee.department }}",
             {% endif %}
         {% endfor %}
-    ])];
+    ].filter((value, index, self) => self.indexOf(value) === index);
     
-    // Contar usuários por departamento
     const deptCounts = departments.map(dept => {
-        return {{ users|tojson }}.filter(user => 
-            user.employee && user.employee.department === dept
-        ).length;
+        return {{ users|selectattr('employee')|selectattr('employee.department', 'defined')|list|length }};
     });
     
-    // Dados para gráfico de departamentos
     const deptCtx = document.getElementById('deptChart').getContext('2d');
     new Chart(deptCtx, {
         type: 'bar',
