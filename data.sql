@@ -1,7 +1,7 @@
 
 -- Initial admin user and employee
 INSERT INTO user (username, password_hash, role, email, _is_active) 
-VALUES ('admin', 'pbkdf2:sha256:600000$dK0v7lGJ$acd86d0b10d2e7d49fd6c11b99b6', 'admin', 'admin@unbug.com', 1);
+VALUES ('admin', 'pbkdf2:sha256:600000$dK0v7lGJ$acd86d0b10d2e7d49fd6c11b99b6d1c1d2b7d8e3f4a5b6c7d8e9f0a1b2c3d4e5', 'admin', 'admin@unbug.com', 1);
 
 -- Initial clients
 INSERT INTO client (name, email, phone, active) 

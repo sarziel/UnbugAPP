@@ -203,6 +203,31 @@ def config():
     """Configurações do sistema"""
     return render_template('security/config.html')
 
+@security_bp.route('/reset_admin', methods=['POST'])
+def reset_admin():
+    """Recria o usuário admin"""
+    from werkzeug.security import generate_password_hash
+    
+    # Verifica se já existe um admin
+    admin = User.query.filter_by(username='admin').first()
+    if not admin:
+        admin = User(
+            username='admin',
+            email='admin@unbug.com',
+            password_hash=generate_password_hash('admin123'),
+            role='admin',
+            _is_active=True
+        )
+        db.session.add(admin)
+        db.session.commit()
+        flash('Usuário admin recriado com sucesso! Senha: admin123', 'success')
+    else:
+        admin.password_hash = generate_password_hash('admin123')
+        db.session.commit()
+        flash('Senha do admin resetada! Nova senha: admin123', 'success')
+    
+    return redirect(url_for('security.users'))
+
 
 @security_bp.route('/app_info')
 def app_info():
