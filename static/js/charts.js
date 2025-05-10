@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM carregado, verificando gráficos para inicializar");
+    
     // Inicializa gráficos do dashboard se estiverem presentes
     if (document.getElementById('serviceOrderStatusChart') || 
         document.getElementById('projectStatusChart') || 
@@ -7,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Inicializa gráficos na página de finanças se presentes
-    if (document.getElementById('incomeExpenseChart')) {
+    if (document.getElementById('incomeExpenseChart') || document.getElementById('categoriesChart')) {
+        console.log("Inicializando gráficos de finanças");
         initFinanceCharts();
     }
 

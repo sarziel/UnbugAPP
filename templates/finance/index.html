@@ -219,3 +219,17 @@
     </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Inicializando gráficos da página de finanças");
+        if (typeof initFinanceCharts === 'function') {
+            initFinanceCharts();
+        } else {
+            console.error("Função initFinanceCharts não encontrada");
+        }
+    });
+</script>
+{% endblock %}
