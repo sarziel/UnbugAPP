@@ -12,11 +12,24 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(20), default='employee')  # admin, management, employee
-    is_active = db.Column(db.Boolean, default=True)
+    _is_active = db.Column("is_active", db.Boolean, default=True)  # Usando um alias para a coluna
     last_login = db.Column(db.DateTime, nullable=True)
     login_count = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Override get_id para compatibilidade com Flask-Login
+    def get_id(self):
+        return str(self.id)
+    
+    # Override is_active do UserMixin
+    @property
+    def is_active(self):
+        return self._is_active
+        
+    @is_active.setter
+    def is_active(self, value):
+        self._is_active = value
     
     # Relationship to Employee (optional)
     employee = relationship("Employee", back_populates="user", uselist=False)

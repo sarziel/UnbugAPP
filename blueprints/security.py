@@ -181,8 +181,8 @@ def toggle_user(id):
     if user.username == 'admin':
         flash('Não é possível desativar o usuário administrador principal.', 'danger')
     else:
-        user.is_active = not user.is_active
-        status = 'ativado' if user.is_active else 'desativado'
+        user._is_active = not user._is_active
+        status = 'ativado' if user._is_active else 'desativado'
         db.session.commit()
         flash(f'Usuário "{user.username}" {status} com sucesso.', 'success')
     
