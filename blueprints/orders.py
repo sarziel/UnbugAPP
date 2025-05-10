@@ -190,20 +190,60 @@ from flask_mail import Mail, Message
 
 mail = Mail()
 
-def generate_project_pdf(project):
+def generate_project_pdf(project, include_budget=True):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font('Arial', 'B', 16)
-    pdf.cell(0, 10, 'Unbug Solutions TI - Projeto', ln=True, align='C')
-    pdf.line(10, 30, 200, 30)
     
+    # Header
+    pdf.image('./static/img/unbug_logo.png', x=10, y=8, w=30)
+    pdf.set_font('Arial', 'B', 16)
+    pdf.cell(0, 10, 'Unbug Solutions TI', ln=True, align='C')
     pdf.set_font('Arial', '', 12)
-    pdf.cell(0, 10, f'Projeto: {project.name}', ln=True)
-    pdf.cell(0, 10, f'Cliente: {project.client.name}', ln=True)
-    pdf.cell(0, 10, f'Gerente: {project.manager.full_name}', ln=True)
-    pdf.cell(0, 10, f'Status: {project.status}', ln=True)
-    pdf.cell(0, 10, f'Orçamento: R$ {project.budget}', ln=True)
-    pdf.multi_cell(0, 10, f'Descrição: {project.description}')
+    pdf.cell(0, 10, 'Projetos e Soluções em TI', ln=True, align='C')
+    pdf.line(10, 40, 200, 40)
+    
+    # Project Details
+    pdf.ln(10)
+    pdf.set_font('Arial', 'B', 14)
+    pdf.cell(0, 10, 'Detalhes do Projeto', ln=True)
+    
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(50, 10, 'Nome:', 0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, project.name, ln=True)
+    
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(50, 10, 'Cliente:', 0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, project.client.name, ln=True)
+    
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(50, 10, 'Gerente:', 0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, project.manager.full_name, ln=True)
+    
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(50, 10, 'Status:', 0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, project.status, ln=True)
+    
+    if include_budget and project.budget:
+        pdf.set_font('Arial', 'B', 12)
+        pdf.cell(50, 10, 'Orçamento:', 0)
+        pdf.set_font('Arial', '', 12)
+        pdf.cell(0, 10, f'R$ {project.budget:,.2f}', ln=True)
+    
+    pdf.ln(5)
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(0, 10, 'Descrição:', ln=True)
+    pdf.set_font('Arial', '', 12)
+    pdf.multi_cell(0, 10, project.description)
+    
+    # Footer
+    pdf.set_y(-30)
+    pdf.set_font('Arial', 'I', 8)
+    pdf.cell(0, 10, f'Documento gerado em {datetime.now().strftime("%d/%m/%Y %H:%M")}', ln=True, align='C')
+    pdf.cell(0, 10, 'Unbug Solutions TI - Todos os direitos reservados', align='C')
     
     return pdf.output(dest='S').encode('latin1')
 
@@ -222,7 +262,9 @@ def update_budget(project_id):
 @login_required
 def download_project_pdf(project_id):
     project = Project.query.get_or_404(project_id)
-    pdf_content = generate_project_pdf(project)
+    pdf_type = request.args.get('type', 'project')
+    include_budget = pdf_type == 'budget'
+    pdf_content = generate_project_pdf(project, include_budget)
     return send_file(
         io.BytesIO(pdf_content),
         mimetype='application/pdf',

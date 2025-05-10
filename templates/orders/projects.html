@@ -100,10 +100,28 @@
                             <td>{% if project.budget %}R$ {{ "%.2f"|format(project.budget|float) }}{% else %}Não definido{% endif %}</td>
                             <td>
                                 <div class="btn-group">
-                                    <!-- Budget Modal Button -->
-                                    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#budgetModal{{ project.id }}" title="Orçamento">
-                                        <i class="fas fa-dollar-sign"></i>
-                                    </button>
+                                    <div class="dropdown d-inline">
+                                        <button class="btn btn-sm btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#budgetModal{{ project.id }}">
+                                                    <i class="fas fa-dollar-sign me-2"></i>Definir Orçamento
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url_for('orders.download_project_pdf', project_id=project.id, type='budget') }}" class="dropdown-item">
+                                                    <i class="fas fa-file-pdf me-2"></i>Gerar Orçamento PDF
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ url_for('orders.download_project_pdf', project_id=project.id, type='project') }}" class="dropdown-item">
+                                                    <i class="fas fa-file-contract me-2"></i>Gerar Projeto PDF
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                     <!-- PDF Download -->
                                     <a href="{{ url_for('orders.download_project_pdf', project_id=project.id) }}" class="btn btn-sm btn-secondary" title="Download PDF">
                                         <i class="fas fa-file-pdf"></i>
@@ -115,7 +133,7 @@
                                     <a href="{{ url_for('orders.edit_project', project_id=project.id) }}" class="btn btn-sm btn-warning" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    
+
                                     <!-- Budget Modal -->
                                     <div class="modal fade" id="budgetModal{{ project.id }}" tabindex="-1">
                                         <div class="modal-dialog">
@@ -139,7 +157,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Email Modal -->
                                     <div class="modal fade" id="emailModal{{ project.id }}" tabindex="-1">
                                         <div class="modal-dialog">
