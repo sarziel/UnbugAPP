@@ -126,7 +126,8 @@ class Supplier(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
-    inventory_items = relationship("InventoryItem", back_populates="supplier")
+    stock_items = relationship("StockItem", back_populates="supplier")
+    store_items = relationship("StoreItem", back_populates="supplier")
     financial_entries = relationship("FinancialEntry", back_populates="supplier")
 
 
@@ -191,7 +192,7 @@ class Project(db.Model):
     financial_entries = relationship("FinancialEntry", back_populates="project")
 
 
-class InventoryItem(db.Model):
+class StockItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
@@ -206,7 +207,29 @@ class InventoryItem(db.Model):
     
     # Relationships
     supplier_id = db.Column(db.Integer, ForeignKey('supplier.id'))
-    supplier = relationship("Supplier", back_populates="inventory_items")
+    supplier = relationship("Supplier", back_populates="stock_items")
+    
+    def is_low_stock(self):
+        return self.quantity <= self.minimum_stock
+
+class StoreItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    sku = db.Column(db.String(50), unique=True)
+    category = db.Column(db.String(100))
+    quantity = db.Column(db.Integer, default=0)
+    minimum_stock = db.Column(db.Integer, default=1)
+    unit_price = db.Column(db.Numeric(10, 2))
+    location = db.Column(db.String(100))
+    image_url = db.Column(db.String(300))
+    is_featured = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    supplier_id = db.Column(db.Integer, ForeignKey('supplier.id'))
+    supplier = relationship("Supplier", back_populates="store_items")
     
     def is_low_stock(self):
         return self.quantity <= self.minimum_stock
