@@ -166,7 +166,9 @@ def view(employee_id):
     # Get employee projects
     projects = employee.projects
     
+    from datetime import datetime
     return render_template('employees/view.html', 
                           employee=employee,
                           service_orders=service_orders,
-                          projects=projects)
+                          projects=projects,
+                          now=datetime.utcnow())
