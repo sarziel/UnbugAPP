@@ -62,7 +62,7 @@ def create_app():
     
     with app.app_context():
         # Import models
-        from models import User, Employee, Client, Supplier, ServiceOrder, Project, InventoryItem, FinancialEntry
+        from models import User, Employee, Client, Supplier, ServiceOrder, Project, StockItem, StoreItem, FinancialEntry
         
         # Create or update database tables
         try:
