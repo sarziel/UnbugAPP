@@ -162,79 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function initDashboardCharts() {
-    document.addEventListener('DOMContentLoaded', function() {
-        const serviceOrderStatusChart = document.getElementById('serviceOrderStatusChart');
-        const projectStatusChart = document.getElementById('projectStatusChart');
-        const monthlyFinanceChart = document.getElementById('monthlyFinanceChart');
-
-        if (serviceOrderStatusChart) {
-            fetch('/dashboard/service-order-stats')
-                .then(response => response.json())
-                .then(data => {
-                    new Chart(serviceOrderStatusChart, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Abertas', 'Em Progresso', 'Concluídas', 'Canceladas'],
-                            datasets: [{
-                                data: [data.open, data.in_progress, data.completed, data.cancelled],
-                                backgroundColor: ['#17a2b8', '#007bff', '#28a745', '#dc3545']
-                            }]
-                        }
-                    });
-                });
-        }
-
-        if (projectStatusChart) {
-            fetch('/dashboard/project-stats')
-                .then(response => response.json())
-                .then(data => {
-                    new Chart(projectStatusChart, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Planejamento', 'Em Progresso', 'Em Espera', 'Concluídos', 'Cancelados'],
-                            datasets: [{
-                                data: [data.planning, data.in_progress, data.on_hold, data.completed, data.cancelled],
-                                backgroundColor: ['#17a2b8', '#007bff', '#ffc107', '#28a745', '#dc3545']
-                            }]
-                        }
-                    });
-                });
-        }
-
-        if (monthlyFinanceChart) {
-            fetch('/dashboard/finance-stats')
-                .then(response => response.json())
-                .then(data => {
-                    new Chart(monthlyFinanceChart, {
-                        type: 'line',
-                        data: {
-                            labels: data.months,
-                            datasets: [{
-                                label: 'Receitas',
-                                data: data.income,
-                                borderColor: '#28a745',
-                                fill: false
-                            }, {
-                                label: 'Despesas',
-                                data: data.expenses,
-                                borderColor: '#dc3545',
-                                fill: false
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
-                            }
-                        }
-                    });
-                });
-        }
-    });
-}
-
 function initFinanceCharts() {
     const incomeExpenseChart = document.getElementById('incomeExpenseChart');
     const categoriesChart = document.getElementById('categoriesChart');
@@ -415,10 +342,10 @@ function initDashboardCharts() {
 
     // Gráfico de Status das Ordens de Serviço
     initServiceOrderChart();
-    
+
     // Gráfico de Status dos Projetos
     initProjectStatusChart();
-    
+
     // Gráfico de Finanças Mensais (se o usuário tiver acesso)
     if (document.getElementById('monthlyFinanceChart')) {
         initMonthlyFinanceChart();
@@ -428,7 +355,7 @@ function initDashboardCharts() {
 function initServiceOrderChart() {
     const ctx = document.getElementById('serviceOrderStatusChart');
     if (!ctx) return;
-    
+
     // Buscar dados da API
     fetch('/dashboard/service-order-stats')
         .then(response => response.json())
@@ -459,7 +386,7 @@ function initServiceOrderChart() {
 function initProjectStatusChart() {
     const ctx = document.getElementById('projectStatusChart');
     if (!ctx) return;
-    
+
     // Buscar dados da API
     fetch('/dashboard/project-stats')
         .then(response => response.json())
@@ -490,7 +417,7 @@ function initProjectStatusChart() {
 function initMonthlyFinanceChart() {
     const ctx = document.getElementById('monthlyFinanceChart');
     if (!ctx) return;
-    
+
     // Buscar dados da API
     fetch('/dashboard/finance-stats')
         .then(response => response.json())
@@ -499,7 +426,7 @@ function initMonthlyFinanceChart() {
                 console.error('Erro de permissão:', data.error);
                 return;
             }
-            
+
             new Chart(ctx, {
                 type: 'line',
                 data: {

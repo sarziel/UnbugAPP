@@ -160,7 +160,6 @@ def create_app():
         from blueprints.orders import orders_bp
         from blueprints.finance import finance_bp
         from blueprints.stock import stock_bp
-        from blueprints.store import store_bp
         from blueprints.employees import employees_bp
         from blueprints.clients import clients_bp
         from blueprints.security import security_bp
@@ -170,7 +169,6 @@ def create_app():
         app.register_blueprint(orders_bp)
         app.register_blueprint(finance_bp)
         app.register_blueprint(stock_bp)
-        app.register_blueprint(store_bp)
         app.register_blueprint(employees_bp)
         app.register_blueprint(clients_bp)
         app.register_blueprint(security_bp)
