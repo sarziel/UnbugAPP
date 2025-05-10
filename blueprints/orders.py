@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, send_file
+import io
 from flask_login import login_required, current_user
 from app import db
 from models import ServiceOrder, Project, Client, Employee, OrderItem, InventoryItem
