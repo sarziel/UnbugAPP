@@ -21,9 +21,11 @@ def login():
         
         user = User.query.filter_by(username=username).first()
         
-        if user and check_password_hash(user.password_hash, password):
+        if user and password is not None and check_password_hash(user.password_hash, password):
             login_user(user)
-            flash(f'Bem vindo, {user.username}!', 'success')
+            # Use employee first_name if available, otherwise use username
+            display_name = user.employee.first_name if user.employee else user.username
+            flash(f'Bem vindo, {display_name}!', 'success')
             
             # Check if there's a 'next' parameter in the request, redirecting to that page if it exists
             next_page = request.args.get('next')
@@ -49,9 +51,12 @@ def change_password():
     form = ChangePasswordForm()
     
     if form.validate_on_submit():
-        if check_password_hash(current_user.password_hash, form.current_password.data):
+        current_password = form.current_password.data
+        if current_password is not None and check_password_hash(current_user.password_hash, current_password):
             # Set the new password
-            current_user.password_hash = generate_password_hash(form.new_password.data)
+            new_password = form.new_password.data
+            if new_password is not None:
+                current_user.password_hash = generate_password_hash(new_password)
             db.session.commit()
             
             flash('Senha alterada com sucesso!', 'success')

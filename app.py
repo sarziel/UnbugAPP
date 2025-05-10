@@ -48,6 +48,8 @@ def create_app():
         
         # Create admin user if not exists
         from werkzeug.security import generate_password_hash
+        from datetime import datetime
+        
         admin = User.query.filter_by(username='admin').first()
         if not admin:
             admin = User(
@@ -57,6 +59,20 @@ def create_app():
                 email='admin@unbug.com'
             )
             db.session.add(admin)
+            db.session.flush()  # Para obter o ID do admin
+            
+            # Criar funcionário para o admin
+            admin_employee = Employee(
+                first_name='João',
+                last_name='Silva',
+                position='Gerente TI',
+                department='TI',
+                phone='(11) 91234-5678',
+                hire_date=datetime.now().date(),
+                active=True,
+                user_id=admin.id
+            )
+            db.session.add(admin_employee)
             
             # Add predefined users
             users = [
@@ -68,6 +84,42 @@ def create_app():
                      role='management', email='hr@unbug.com')
             ]
             db.session.add_all(users)
+            db.session.flush()  # Para obter IDs dos usuários
+            
+            # Criar funcionários para os demais usuários
+            employees = [
+                Employee(
+                    first_name='Roberto',
+                    last_name='Costa',
+                    position='CEO',
+                    department='Diretoria',
+                    phone='(11) 99876-5432',
+                    hire_date=datetime.now().date(),
+                    active=True,
+                    user_id=users[0].id
+                ),
+                Employee(
+                    first_name='Carlos',
+                    last_name='Oliveira',
+                    position='Gerente de Operações',
+                    department='Operações',
+                    phone='(11) 98765-4321',
+                    hire_date=datetime.now().date(),
+                    active=True,
+                    user_id=users[1].id
+                ),
+                Employee(
+                    first_name='Ana',
+                    last_name='Souza',
+                    position='Gerente de RH',
+                    department='Recursos Humanos',
+                    phone='(11) 97654-3210',
+                    hire_date=datetime.now().date(),
+                    active=True,
+                    user_id=users[2].id
+                )
+            ]
+            db.session.add_all(employees)
             db.session.commit()
         
         # Register blueprints
