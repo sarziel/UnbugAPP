@@ -7,7 +7,13 @@ from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
 
 # Initialize SQLAlchemy with declarative base
 class Base(DeclarativeBase):
@@ -170,6 +176,12 @@ def create_app():
         def load_user(user_id):
             from models import User
             return User.query.get(int(user_id))
+            
+        # Error handlers
+        @app.errorhandler(Exception)
+        def handle_error(error):
+            app.logger.error(f'Unhandled error: {str(error)}')
+            return 'Internal server error', 500
             
         return app
 
