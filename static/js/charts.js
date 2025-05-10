@@ -11,6 +11,158 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('inventoryStatusChart')) {
         initInventoryCharts();
     }
+
+    const serviceOrderStatusChart = document.getElementById('serviceOrderStatusChart');
+    const projectStatusChart = document.getElementById('projectStatusChart');
+    const monthlyFinanceChart = document.getElementById('monthlyFinanceChart');
+
+    if (serviceOrderStatusChart) {
+        fetch('/dashboard/service-order-stats')
+            .then(response => response.json())
+            .then(data => {
+                new Chart(serviceOrderStatusChart, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Abertas', 'Em Andamento', 'Concluídas', 'Canceladas'],
+                        datasets: [{
+                            data: [
+                                data.open || 0,
+                                data.in_progress || 0,
+                                data.completed || 0,
+                                data.cancelled || 0
+                            ],
+                            backgroundColor: [
+                                '#17a2b8',
+                                '#0a6ebd', 
+                                '#28a745',
+                                '#dc3545'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    boxWidth: 12,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    if (projectStatusChart) {
+        fetch('/dashboard/project-stats')
+            .then(response => response.json())
+            .then(data => {
+                new Chart(projectStatusChart, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Planejamento', 'Em Andamento', 'Em Espera', 'Concluídos', 'Cancelados'],
+                        datasets: [{
+                            data: [
+                                data.planning || 0,
+                                data.in_progress || 0,
+                                data.on_hold || 0,
+                                data.completed || 0,
+                                data.cancelled || 0
+                            ],
+                            backgroundColor: [
+                                '#17a2b8',
+                                '#0a6ebd',
+                                '#ffc107',
+                                '#28a745',
+                                '#dc3545'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    boxWidth: 12,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    if (monthlyFinanceChart) {
+        // Monthly Finance Chart
+        fetch('/dashboard/finance-stats')
+            .then(response => response.json())
+            .then(data => {
+                new Chart(monthlyFinanceChart, {
+                    type: 'bar',
+                    data: {
+                        labels: data.months,
+                        datasets: [
+                            {
+                                label: 'Receitas',
+                                data: data.income,
+                                backgroundColor: '#28a745',
+                                borderColor: '#28a745',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Despesas',
+                                data: data.expenses,
+                                backgroundColor: '#dc3545',
+                                borderColor: '#dc3545',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'R$ ' + value.toLocaleString('pt-BR');
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': R$ ' + context.parsed.y.toLocaleString('pt-BR');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching finance stats:', error);
+            });
+    }
 });
 
 function initDashboardCharts() {
@@ -84,179 +236,6 @@ function initDashboardCharts() {
                 });
         }
     });
-}
-
-    if (serviceOrderStatusChart) {
-        fetch('/dashboard/service-order-stats')
-            .then(response => response.json())
-            .then(data => {
-                new Chart(serviceOrderStatusChart, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Abertas', 'Em Andamento', 'Concluídas', 'Canceladas'],
-                        datasets: [{
-                            data: [
-                                data.open || 0,
-                                data.in_progress || 0,
-                                data.completed || 0,
-                                data.cancelled || 0
-                            ],
-                            backgroundColor: [
-                                '#17a2b8',
-                                '#0a6ebd', 
-                                '#28a745',
-                                '#dc3545'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    boxWidth: 12,
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    boxWidth: 12
-                                }
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    if (projectStatusChart) {
-        fetch('/dashboard/project-stats')
-            .then(response => response.json())
-            .then(data => {
-                new Chart(projectStatusChart, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Planejamento', 'Em Andamento', 'Em Espera', 'Concluídos', 'Cancelados'],
-                        datasets: [{
-                            data: [
-                                data.planning || 0,
-                                data.in_progress || 0,
-                                data.on_hold || 0,
-                                data.completed || 0,
-                                data.cancelled || 0
-                            ],
-                            backgroundColor: [
-                                '#17a2b8',
-                                '#0a6ebd',
-                                '#ffc107',
-                                '#28a745',
-                                '#dc3545'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    boxWidth: 12,
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    boxWidth: 12
-                                }
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    if (monthlyFinanceChart) {
-        // Monthly Finance Chart
-        fetch('/dashboard/finance-stats')
-            .then(response => response.json())
-            .then(data => {
-                new Chart(monthlyFinanceChart, {
-                    type: 'bar',
-                    data: {
-                        labels: data.months,
-                        datasets: [
-                            {
-                                label: 'Receitas',
-                                data: data.income,
-                                backgroundColor: '#28a745',
-                                borderColor: '#28a745',
-                                borderWidth: 1
-                            },
-                            {
-                                label: 'Despesas',
-                                data: data.expenses,
-                                backgroundColor: '#dc3545',
-                                borderColor: '#dc3545',
-                                borderWidth: 1
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return 'R$ ' + value.toLocaleString('pt-BR');
-                                    }
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.dataset.label + ': R$ ' + context.parsed.y.toLocaleString('pt-BR');
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching finance stats:', error);
-            });
-    }
 }
 
 function initFinanceCharts() {
