@@ -37,7 +37,7 @@ class UserForm(FlaskForm):
         ('management', 'Gerência'),
         ('employee', 'Funcionário')
     ], validators=[DataRequired()])
-    
+
     # Informações do funcionário
     first_name = StringField('Nome', validators=[
         DataRequired(),
@@ -63,20 +63,20 @@ class UserForm(FlaskForm):
         DataRequired()
     ])
     active = BooleanField('Ativo', default=True)
-    
+
     submit = SubmitField('Salvar')
-    
+
     def __init__(self, original_username=None, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
         self.original_username = original_username
-        
+
     def validate_username(self, username):
         if self.original_username and self.original_username == username.data:
             return
         user = User.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError('Este nome de usuário já está em uso. Por favor, escolha outro.')
-            
+
     def validate_email(self, email):
         if self.original_username:
             user = User.query.filter_by(username=self.original_username).first()
@@ -95,7 +95,7 @@ class EmployeeForm(FlaskForm):
     phone = StringField('Telefone', validators=[DataRequired()])
     hire_date = DateField('Data de Contratação', format='%Y-%m-%d', validators=[DataRequired()])
     active = BooleanField('Ativo')
-    
+
     # User account details
     username = StringField('Nome de Usuário', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -105,7 +105,7 @@ class EmployeeForm(FlaskForm):
         ('management', 'Gerência'), 
         ('admin', 'Administrador')
     ], validators=[DataRequired()])
-    
+
     submit = SubmitField('Salvar')
 
 class EditEmployeeForm(FlaskForm):
@@ -116,7 +116,7 @@ class EditEmployeeForm(FlaskForm):
     phone = StringField('Telefone', validators=[DataRequired()])
     hire_date = DateField('Data de Contratação', format='%Y-%m-%d', validators=[DataRequired()])
     active = BooleanField('Ativo')
-    
+
     # User account details - password is optional for edit
     email = StringField('Email', validators=[DataRequired(), Email()])
     role = SelectField('Nível de Acesso', choices=[
@@ -124,7 +124,7 @@ class EditEmployeeForm(FlaskForm):
         ('management', 'Gerência'), 
         ('admin', 'Administrador')
     ], validators=[DataRequired()])
-    
+
     submit = SubmitField('Atualizar')
 
 # Client/Supplier Forms
@@ -138,7 +138,7 @@ class ClientForm(FlaskForm):
     zip_code = StringField('CEP', validators=[DataRequired()])
     contact_person = StringField('Pessoa de Contato', validators=[Optional()])
     active = BooleanField('Ativo', default=True)
-    
+
     submit = SubmitField('Salvar')
 
 class SupplierForm(FlaskForm):
@@ -151,7 +151,7 @@ class SupplierForm(FlaskForm):
     zip_code = StringField('CEP', validators=[DataRequired()])
     contact_person = StringField('Pessoa de Contato', validators=[Optional()])
     active = BooleanField('Ativo', default=True)
-    
+
     submit = SubmitField('Salvar')
 
 # Service Order Forms
@@ -174,7 +174,7 @@ class ServiceOrderForm(FlaskForm):
     start_date = DateField('Data de Início', format='%Y-%m-%d', validators=[DataRequired()])
     completion_date = DateField('Data de Conclusão', format='%Y-%m-%d', validators=[Optional()])
     notes = TextAreaField('Observações', validators=[Optional()])
-    
+
     submit = SubmitField('Salvar')
 
 # Project Forms
@@ -193,7 +193,7 @@ class ProjectForm(FlaskForm):
     start_date = DateField('Data de Início', format='%Y-%m-%d', validators=[DataRequired()])
     end_date = DateField('Data de Conclusão Prevista', format='%Y-%m-%d', validators=[Optional()])
     budget = DecimalField('Orçamento', validators=[Optional(), NumberRange(min=0)])
-    
+
     submit = SubmitField('Salvar')
 
 # Inventory Forms
@@ -207,7 +207,7 @@ class InventoryItemForm(FlaskForm):
     unit_price = DecimalField('Preço Unitário', validators=[DataRequired(), NumberRange(min=0)])
     location = StringField('Localização', validators=[Optional()])
     supplier_id = SelectField('Fornecedor', coerce=int, validators=[Optional()])
-    
+
     submit = SubmitField('Salvar')
 
 # Finance Forms
@@ -237,15 +237,15 @@ class FinancialEntryForm(FlaskForm):
         Optional(),
         FileAllowed(['pdf', 'jpg', 'png'], 'Somente arquivos PDF, JPG ou PNG são permitidos.')
     ])
-    
+
     submit = SubmitField('Salvar')
 
 # Order Item Forms
 class OrderItemForm(FlaskForm):
-    inventory_item_id = SelectField('Item', coerce=int, validators=[DataRequired()])
+    inventory_item_id = SelectField('Item do Estoque', coerce=int, validators=[DataRequired()])
     quantity = IntegerField('Quantidade', validators=[DataRequired(), NumberRange(min=1)])
-    service_order_id = HiddenField('Ordem de Serviço ID')
-    
+    service_order_id = HiddenField()
+
     submit = SubmitField('Adicionar Item')
 
 # Search Forms
@@ -260,5 +260,6 @@ class SearchForm(FlaskForm):
     ])
     date_from = DateField('De', format='%Y-%m-%d', validators=[Optional()])
     date_to = DateField('Até', format='%Y-%m-%d', validators=[Optional()])
-    
+
     submit = SubmitField('Buscar')
+`

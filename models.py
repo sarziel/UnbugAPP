@@ -166,8 +166,8 @@ class OrderItem(db.Model):
     service_order_id = db.Column(db.Integer, ForeignKey('service_order.id'))
     service_order = relationship("ServiceOrder", back_populates="items_used")
     
-    inventory_item_id = db.Column(db.Integer, ForeignKey('inventory_item.id'))
-    inventory_item = relationship("InventoryItem")
+    inventory_item_id = db.Column(db.Integer, ForeignKey('stock_item.id'))
+    inventory_item = relationship("StockItem")
 
 
 class Project(db.Model):
