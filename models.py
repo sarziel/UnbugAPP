@@ -267,7 +267,7 @@ class FinancialEntry(db.Model):
 # Trigger to update inventory when items are used in orders
 @event.listens_for(OrderItem, 'after_insert')
 def decrease_inventory_on_order(mapper, connection, target):
-    inventory_item = InventoryItem.query.get(target.inventory_item_id)
+    inventory_item = StockItem.query.get(target.inventory_item_id)
     if inventory_item and inventory_item.quantity >= target.quantity:
         inventory_item.quantity -= target.quantity
         db.session.commit()

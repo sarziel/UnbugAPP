@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 import io
 from flask_login import login_required, current_user
 from app import db
-from models import ServiceOrder, Project, Client, Employee, OrderItem, InventoryItem
+from models import ServiceOrder, Project, Client, Employee, OrderItem, StockItem
 from forms import ServiceOrderForm, ProjectForm, OrderItemForm, SearchForm
 from datetime import datetime
 
@@ -78,7 +78,7 @@ def view_order(order_id):
     # Form for adding items to the order
     form = OrderItemForm()
     form.inventory_item_id.choices = [(item.id, f"{item.name} (Estoque: {item.quantity})") 
-                                     for item in InventoryItem.query.filter(InventoryItem.quantity > 0).all()]
+                                     for item in StockItem.query.filter(StockItem.quantity > 0).all()]
     form.service_order_id.data = order_id
     
     return render_template('orders/view.html', 
