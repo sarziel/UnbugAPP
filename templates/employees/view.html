@@ -55,7 +55,7 @@
                     </li>
                     <li class="list-group-item">
                         <i class="fas fa-clock me-2"></i> Tempo de empresa: 
-                        {% set days_employed = (now - employee.hire_date).days %}
+                        {% set days_employed = (now.date() - employee.hire_date).days %}
                         {% if days_employed < 30 %}
                             {{ days_employed }} dias
                         {% elif days_employed < 365 %}
