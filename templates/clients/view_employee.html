@@ -1,0 +1,186 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mt-4">{{ employee.full_name }}</h1>
+            <p class="text-muted">{{ employee.position }} - {{ employee.department }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('clients.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Informações Básicas -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Informações Básicas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="avatar-circle mx-auto">
+                            <span class="initials">{{ employee.first_name[0] }}{{ employee.last_name[0] }}</span>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Nome Completo:</strong><br>
+                            {{ employee.full_name }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Cargo:</strong><br>
+                            {{ employee.position }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Departamento:</strong><br>
+                            {{ employee.department }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Telefone:</strong><br>
+                            {{ employee.phone }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Status:</strong><br>
+                            {% if employee.active %}
+                            <span class="badge bg-success">Ativo</span>
+                            {% else %}
+                            <span class="badge bg-danger">Inativo</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações Profissionais -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i>Informações Profissionais</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Data de Contratação:</strong><br>
+                            {{ employee.hire_date.strftime('%d/%m/%Y') }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Tempo de Empresa:</strong><br>
+                            {% set days_employed = (now - employee.hire_date).days %}
+                            {% if days_employed < 30 %}
+                                {{ days_employed }} dias
+                            {% elif days_employed < 365 %}
+                                {{ (days_employed / 30) | int }} meses
+                            {% else %}
+                                {{ (days_employed / 365) | int }} anos
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Email Profissional:</strong><br>
+                            {% if employee.user %}
+                                {{ employee.user.email }}
+                            {% else %}
+                                Não cadastrado
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Nível de Acesso:</strong><br>
+                            {% if employee.user %}
+                                {% if employee.user.role == 'admin' %}
+                                    <span class="badge bg-danger">Administrador</span>
+                                {% elif employee.user.role == 'management' %}
+                                    <span class="badge bg-warning text-dark">Gerência</span>
+                                {% else %}
+                                    <span class="badge bg-primary">Funcionário</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary">Sem Acesso</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Estatísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-4">
+                        <div class="col-6">
+                            <h3>{{ service_orders|length }}</h3>
+                            <p class="text-muted mb-0">Ordens de Serviço</p>
+                        </div>
+                        <div class="col-6">
+                            <h3>{{ projects|length }}</h3>
+                            <p class="text-muted mb-0">Projetos</p>
+                        </div>
+                    </div>
+
+                    {% if service_orders %}
+                    <div class="mb-4">
+                        <h6>Status das Ordens</h6>
+                        <div class="progress" style="height: 25px;">
+                            {% set stats = {'open': 0, 'in_progress': 0, 'completed': 0, 'cancelled': 0} %}
+                            {% for order in service_orders %}
+                                {% if order.status == 'open' %}
+                                    {% set _ = stats.update({'open': stats['open'] + 1}) %}
+                                {% elif order.status == 'in_progress' %}
+                                    {% set _ = stats.update({'in_progress': stats['in_progress'] + 1}) %}
+                                {% elif order.status == 'completed' %}
+                                    {% set _ = stats.update({'completed': stats['completed'] + 1}) %}
+                                {% elif order.status == 'cancelled' %}
+                                    {% set _ = stats.update({'cancelled': stats['cancelled'] + 1}) %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% for status, count in stats.items() %}
+                                {% if count > 0 %}
+                                    <div class="progress-bar bg-{{ 'info' if status == 'open' 
+                                                                else 'primary' if status == 'in_progress'
+                                                                else 'success' if status == 'completed'
+                                                                else 'danger' }}"
+                                         style="width: {{ (count / service_orders|length * 100)|round|int }}%"
+                                         title="{{ status|title }}: {{ count }}">
+                                        {{ count }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-circle {
+    width: 120px;
+    height: 120px;
+    background-color: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.initials {
+    font-size: 48px;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+</style>
+{% endblock %}
