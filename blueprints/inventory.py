@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from app import db
-from models import InventoryItem, Supplier
+from models import InventoryItem, Supplier, Client, FinancialEntry
 from forms import InventoryItemForm, SearchForm
 from sqlalchemy import func
+from datetime import datetime
 
 inventory_bp = Blueprint('inventory', __name__, url_prefix='/inventory')
 
@@ -152,6 +153,63 @@ def check_stock(item_id):
         'id': item.id,
         'name': item.name,
         'available': item.quantity,
+
+
+@inventory_bp.route('/pdv')
+@login_required
+def pdv():
+    # Get active clients for the payment form
+    clients = Client.query.filter_by(active=True).all()
+    return render_template('inventory/pdv.html', clients=clients)
+
+@inventory_bp.route('/process-sale', methods=['POST'])
+@login_required
+def process_sale():
+    cart_items = request.json.get('cart_items', [])
+    payment_method = request.json.get('payment_method')
+    client_id = request.json.get('client_id')
+    
+    if not cart_items:
+        return jsonify({'error': 'Carrinho vazio'}), 400
+        
+    try:
+        total_amount = 0
+        
+        # Process each item in cart
+        for item in cart_items:
+            if item['type'] == 'inventory':
+                # Update inventory
+                inv_item = InventoryItem.query.get(item['id'])
+                if not inv_item or inv_item.quantity < item['quantity']:
+                    return jsonify({'error': f'Estoque insuficiente para {item["name"]}'}), 400
+                    
+                inv_item.quantity -= item['quantity']
+                total_amount += item['price'] * item['quantity']
+        
+        # Create financial entry
+        financial_entry = FinancialEntry(
+            type='income',
+            category='sale',
+            amount=total_amount,
+            description='Venda PDV',
+            date=datetime.now(),
+            payment_method=payment_method,
+            client_id=client_id if client_id else None
+        )
+        
+        db.session.add(financial_entry)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Venda realizada com sucesso!',
+            'sale_id': financial_entry.id
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
         'low_stock': item.is_low_stock()
     })
 
