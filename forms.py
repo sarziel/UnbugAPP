@@ -102,7 +102,19 @@ class ProjectForm(FlaskForm):
     budget = DecimalField('Orçamento', validators=[Optional(), NumberRange(min=0)])
     submit = SubmitField('Salvar')
 
-class InventoryItemForm(FlaskForm):
+class StockItemForm(FlaskForm):
+    name = StringField('Nome do Item', validators=[DataRequired()])
+    description = TextAreaField('Descrição')
+    sku = StringField('SKU/Código', validators=[DataRequired()])
+    category = StringField('Categoria', validators=[DataRequired()])
+    quantity = IntegerField('Quantidade', validators=[DataRequired(), NumberRange(min=0)])
+    minimum_stock = IntegerField('Estoque Mínimo', validators=[DataRequired(), NumberRange(min=0)])
+    unit_price = DecimalField('Preço Unitário', validators=[DataRequired(), NumberRange(min=0)])
+    location = StringField('Localização')
+    supplier_id = SelectField('Fornecedor', coerce=int)
+    submit = SubmitField('Salvar')
+
+class StoreItemForm(FlaskForm):
     name = StringField('Nome do Item', validators=[DataRequired()])
     description = TextAreaField('Descrição')
     sku = StringField('SKU/Código', validators=[DataRequired()])
