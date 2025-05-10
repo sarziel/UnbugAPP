@@ -413,15 +413,14 @@ footer a:hover {
 }
 
 .sidebar-nav .nav-submenu {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
+    display: none;
     list-style: none;
     padding-left: 0;
+    margin-bottom: 10px;
 }
 
 .sidebar-nav .nav-submenu.show {
-    max-height: 500px;
+    display: block;
 }
 
 .sidebar-nav .nav-submenu li a {
