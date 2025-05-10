@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Dashboard charts initialization
     initDashboardCharts();
-    
+
     // Initialize charts on finance page if present
     if (document.getElementById('incomeExpenseChart')) {
         initFinanceCharts();
     }
-    
+
     // Initialize charts on inventory page if present
     if (document.getElementById('inventoryStatusChart')) {
         initInventoryCharts();
@@ -15,137 +15,75 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initDashboardCharts() {
     document.addEventListener('DOMContentLoaded', function() {
-    const serviceOrderStatusChart = document.getElementById('serviceOrderStatusChart');
-    const projectStatusChart = document.getElementById('projectStatusChart');
-    const monthlyFinanceChart = document.getElementById('monthlyFinanceChart');
+        const serviceOrderStatusChart = document.getElementById('serviceOrderStatusChart');
+        const projectStatusChart = document.getElementById('projectStatusChart');
+        const monthlyFinanceChart = document.getElementById('monthlyFinanceChart');
 
-    if (serviceOrderStatusChart) {
-        fetch('/dashboard/service-order-stats')
-            .then(response => response.json())
-            .then(data => {
-                new Chart(serviceOrderStatusChart, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Abertas', 'Em Progresso', 'Concluídas', 'Canceladas'],
-                        datasets: [{
-                            data: [data.open, data.in_progress, data.completed, data.cancelled],
-                            backgroundColor: ['#17a2b8', '#007bff', '#28a745', '#dc3545']
-                        }]
-                    }
+        if (serviceOrderStatusChart) {
+            fetch('/dashboard/service-order-stats')
+                .then(response => response.json())
+                .then(data => {
+                    new Chart(serviceOrderStatusChart, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Abertas', 'Em Progresso', 'Concluídas', 'Canceladas'],
+                            datasets: [{
+                                data: [data.open, data.in_progress, data.completed, data.cancelled],
+                                backgroundColor: ['#17a2b8', '#007bff', '#28a745', '#dc3545']
+                            }]
+                        }
+                    });
                 });
-            });
-    }
+        }
 
-    if (projectStatusChart) {
-        fetch('/dashboard/project-stats')
-            .then(response => response.json())
-            .then(data => {
-                new Chart(projectStatusChart, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Planejamento', 'Em Progresso', 'Em Espera', 'Concluídos', 'Cancelados'],
-                        datasets: [{
-                            data: [data.planning, data.in_progress, data.on_hold, data.completed, data.cancelled],
-                            backgroundColor: ['#17a2b8', '#007bff', '#ffc107', '#28a745', '#dc3545']
-                        }]
-                    }
+        if (projectStatusChart) {
+            fetch('/dashboard/project-stats')
+                .then(response => response.json())
+                .then(data => {
+                    new Chart(projectStatusChart, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Planejamento', 'Em Progresso', 'Em Espera', 'Concluídos', 'Cancelados'],
+                            datasets: [{
+                                data: [data.planning, data.in_progress, data.on_hold, data.completed, data.cancelled],
+                                backgroundColor: ['#17a2b8', '#007bff', '#ffc107', '#28a745', '#dc3545']
+                            }]
+                        }
+                    });
                 });
-            });
-    }
+        }
 
-    if (monthlyFinanceChart) {
-        fetch('/dashboard/finance-stats')
-            .then(response => response.json())
-            .then(data => {
-                new Chart(monthlyFinanceChart, {
-                    type: 'line',
-                    data: {
-                        labels: data.months,
-                        datasets: [{
-                            label: 'Receitas',
-                            data: data.income,
-                            borderColor: '#28a745',
-                            fill: false
-                        }, {
-                            label: 'Despesas',
-                            data: data.expenses,
-                            borderColor: '#dc3545',
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
+        if (monthlyFinanceChart) {
+            fetch('/dashboard/finance-stats')
+                .then(response => response.json())
+                .then(data => {
+                    new Chart(monthlyFinanceChart, {
+                        type: 'line',
+                        data: {
+                            labels: data.months,
+                            datasets: [{
+                                label: 'Receitas',
+                                data: data.income,
+                                borderColor: '#28a745',
+                                fill: false
+                            }, {
+                                label: 'Despesas',
+                                data: data.expenses,
+                                borderColor: '#dc3545',
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
                             }
                         }
-                    }
+                    });
                 });
-            });
-    }
-});
-            .then(response => response.json())
-            .then(data => {
-                new Chart(serviceOrderStatusChart, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Abertas', 'Em Progresso', 'Concluídas', 'Canceladas'],
-                        datasets: [{
-                            data: [data.open, data.in_progress, data.completed, data.cancelled],
-                            backgroundColor: ['#17a2b8', '#007bff', '#28a745', '#dc3545']
-                        }]
-                    }
-                });
-            });
-    }
-
-    if (projectStatusChart) {
-        fetch('/dashboard/project-stats')
-            .then(response => response.json())
-            .then(data => {
-                new Chart(projectStatusChart, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Planejamento', 'Em Progresso', 'Em Espera', 'Concluídos', 'Cancelados'],
-                        datasets: [{
-                            data: [data.planning, data.in_progress, data.on_hold, data.completed, data.cancelled],
-                            backgroundColor: ['#17a2b8', '#007bff', '#ffc107', '#28a745', '#dc3545']
-                        }]
-                    }
-                });
-            });
-    }
-
-    if (monthlyFinanceChart) {
-        fetch('/dashboard/finance-stats')
-            .then(response => response.json())
-            .then(data => {
-                new Chart(monthlyFinanceChart, {
-                    type: 'line',
-                    data: {
-                        labels: data.months,
-                        datasets: [{
-                            label: 'Receitas',
-                            data: data.income,
-                            borderColor: '#28a745',
-                            fill: false
-                        }, {
-                            label: 'Despesas',
-                            data: data.expenses,
-                            borderColor: '#dc3545',
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            });
-    }
+        }
+    });
 }
 
     if (serviceOrderStatusChart) {
@@ -263,7 +201,7 @@ function initDashboardCharts() {
             })
             .catch(error => console.error('Error:', error));
     }
-    
+
     if (monthlyFinanceChart) {
         // Monthly Finance Chart
         fetch('/dashboard/finance-stats')
@@ -324,7 +262,7 @@ function initDashboardCharts() {
 function initFinanceCharts() {
     const incomeExpenseChart = document.getElementById('incomeExpenseChart');
     const categoriesChart = document.getElementById('categoriesChart');
-    
+
     if (incomeExpenseChart) {
         // Income vs Expense Chart
         fetch('/finance/stats')
@@ -362,7 +300,7 @@ function initFinanceCharts() {
                 console.error('Error fetching finance stats:', error);
             });
     }
-    
+
     if (categoriesChart) {
         // Categories Chart
         fetch('/finance/category-stats')
@@ -420,7 +358,7 @@ function initFinanceCharts() {
 function initInventoryCharts() {
     const inventoryStatusChart = document.getElementById('inventoryStatusChart');
     const topItemsChart = document.getElementById('topItemsChart');
-    
+
     if (inventoryStatusChart) {
         // Inventory Status Chart
         fetch('/inventory/stats')
@@ -459,7 +397,7 @@ function initInventoryCharts() {
                 console.error('Error fetching inventory stats:', error);
             });
     }
-    
+
     if (topItemsChart) {
         // Top Items Chart
         fetch('/inventory/top-items')
