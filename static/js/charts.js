@@ -410,3 +410,159 @@ function initInventoryCharts() {
             });
     }
 }
+// Inicialização dos gráficos do dashboard
+
+function initDashboardCharts() {
+    // Inicializa os gráficos quando o DOM estiver pronto
+    console.log("Iniciando gráficos do dashboard");
+
+    // Gráfico de Status das Ordens de Serviço
+    initServiceOrderChart();
+    
+    // Gráfico de Status dos Projetos
+    initProjectStatusChart();
+    
+    // Gráfico de Finanças Mensais (se o usuário tiver acesso)
+    if (document.getElementById('monthlyFinanceChart')) {
+        initMonthlyFinanceChart();
+    }
+}
+
+function initServiceOrderChart() {
+    const ctx = document.getElementById('serviceOrderStatusChart');
+    if (!ctx) return;
+    
+    // Buscar dados da API
+    fetch('/dashboard/service-order-stats')
+        .then(response => response.json())
+        .then(data => {
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Abertas', 'Em Progresso', 'Concluídas', 'Canceladas'],
+                    datasets: [{
+                        data: [data.open, data.in_progress, data.completed, data.cancelled],
+                        backgroundColor: ['#17a2b8', '#007bff', '#28a745', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Erro ao carregar dados de ordens:', error));
+}
+
+function initProjectStatusChart() {
+    const ctx = document.getElementById('projectStatusChart');
+    if (!ctx) return;
+    
+    // Buscar dados da API
+    fetch('/dashboard/project-stats')
+        .then(response => response.json())
+        .then(data => {
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Planejamento', 'Em Progresso', 'Em Espera', 'Concluídos', 'Cancelados'],
+                    datasets: [{
+                        data: [data.planning, data.in_progress, data.on_hold, data.completed, data.cancelled],
+                        backgroundColor: ['#17a2b8', '#007bff', '#ffc107', '#28a745', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Erro ao carregar dados de projetos:', error));
+}
+
+function initMonthlyFinanceChart() {
+    const ctx = document.getElementById('monthlyFinanceChart');
+    if (!ctx) return;
+    
+    // Buscar dados da API
+    fetch('/dashboard/finance-stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Erro de permissão:', data.error);
+                return;
+            }
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.months,
+                    datasets: [
+                        {
+                            label: 'Receitas',
+                            data: data.income,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Despesas',
+                            data: data.expenses,
+                            borderColor: '#dc3545',
+                            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('pt-BR', { 
+                                            style: 'currency', 
+                                            currency: 'BRL' 
+                                        }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Erro ao carregar dados financeiros:', error));
+}
