@@ -38,6 +38,14 @@ class User(UserMixin, db.Model):
     
     def can_delete(self):
         return self.role in ['admin', 'management']
+        
+    def get_role_display(self):
+        role_names = {
+            'admin': 'Administrador',
+            'management': 'Gerência',
+            'employee': 'Funcionário'
+        }
+        return role_names.get(self.role, self.role)
 
 
 class Employee(db.Model):
