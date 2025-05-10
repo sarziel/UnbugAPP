@@ -144,6 +144,26 @@ def store():
 
     return render_template('inventory/store.html', category_items=category_items)
 
+@inventory_bp.route('/search-items')
+@login_required
+def search_items():
+    query = request.args.get('query', '')
+    if not query:
+        return jsonify([])
+    
+    items = InventoryItem.query.filter(
+        (InventoryItem.name.ilike(f'%{query}%')) |
+        (InventoryItem.sku.ilike(f'%{query}%'))
+    ).all()
+    
+    return jsonify([{
+        'id': item.id,
+        'name': item.name,
+        'sku': item.sku,
+        'quantity': item.quantity,
+        'unit_price': float(item.unit_price)
+    } for item in items])
+
 @inventory_bp.route('/check-stock/<int:item_id>')
 @login_required
 def check_stock(item_id):
