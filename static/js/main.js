@@ -1,4 +1,48 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Header date display
+    const headerDateElement = document.getElementById('header-date');
+    if (headerDateElement) {
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        const today = new Date();
+        headerDateElement.textContent = today.toLocaleDateString('pt-BR', options);
+    }
+    
+    // Header theme toggle
+    const headerThemeToggle = document.getElementById('header-theme-toggle');
+    if (headerThemeToggle) {
+        headerThemeToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const body = document.body;
+            
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light');
+            }
+            
+            // Update icon in the header dropdown
+            const themeIcon = headerThemeToggle.querySelector('i');
+            if (themeIcon) {
+                if (body.classList.contains('dark-theme')) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                }
+            }
+        });
+    }
+    
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {

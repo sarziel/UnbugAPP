@@ -336,6 +336,55 @@ footer a:hover {
     margin-right: 10px;
 }
 
+/* Header Styling */
+.app-header {
+    background-color: var(--card-bg);
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.header-logo img {
+    height: 50px;
+    max-width: 100%;
+}
+
+.header-date {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.header-user-button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.header-user-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.header-user-button i {
+    font-size: 1.2rem;
+}
+
+.logo-icon {
+    height: 35px;
+    width: auto;
+    margin-right: 10px;
+}
+
+.footer-logo {
+    max-height: 50px;
+    max-width: 100%;
+}
+
 /* Sidebar Styling */
 .sidebar {
     height: 100%;
