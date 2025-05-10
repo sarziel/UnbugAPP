@@ -18,37 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     });
 
-    // Theme toggle on both sidebar and header
-    const themeToggles = document.querySelectorAll('.theme-toggle, #header-theme-toggle');
-    themeToggles.forEach(toggle => {
-        if (toggle) {
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const body = document.body;
-                
-                if (body.classList.contains('light-theme')) {
-                    body.classList.remove('light-theme');
-                    body.classList.add('dark-theme');
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    body.classList.remove('dark-theme');
-                    body.classList.add('light-theme');
-                    localStorage.setItem('theme', 'light');
-                }
-                
-                // Update all theme icons
-                document.querySelectorAll('.theme-icon, .fa-moon, .fa-sun').forEach(icon => {
-                    if (body.classList.contains('dark-theme')) {
-                        icon.classList.remove('fa-moon');
-                        icon.classList.add('fa-sun');
-                    } else {
-                        icon.classList.remove('fa-sun');
-                        icon.classList.add('fa-moon');
-                    }
-                });
-            });
-        }
-    });
+    // Theme functionality moved to theme.js
     
     // Initialize popovers
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
