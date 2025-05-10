@@ -117,32 +117,29 @@ def update_quantity(item_id):
 
 @stock_bp.route('/stats')
 @login_required
-def stock_stats():
-    # Contagem de itens por status de estoque
-    normal_count = StockItem.query.filter(StockItem.quantity > StockItem.minimum_stock).count()
-    low_count = StockItem.query.filter(
-        StockItem.quantity > 0, 
-        StockItem.quantity <= StockItem.minimum_stock
-    ).count()
-    out_count = StockItem.query.filter(StockItem.quantity <= 0).count()
+def stats():
+    # Get inventory statistics for charts
+    normal_stock = StockItem.query.filter(StockItem.quantity > StockItem.minimum_stock).count()
+    low_stock = StockItem.query.filter(StockItem.quantity <= StockItem.minimum_stock, StockItem.quantity > 0).count()
+    out_of_stock = StockItem.query.filter(StockItem.quantity == 0).count()
 
     return jsonify({
-        'normal': normal_count,
-        'low': low_count,
-        'out': out_count
+        'normal': normal_stock,
+        'low': low_stock,
+        'out': out_of_stock
     })
 
 @stock_bp.route('/top-items')
 @login_required
 def top_items():
-    # Obter os 5 itens com maior quantidade em estoque
-    top_items_data = StockItem.query.order_by(desc(StockItem.quantity)).limit(5).all()
+    # Get top 5 items by quantity
+    top_items = StockItem.query.order_by(StockItem.quantity.desc()).limit(5).all()
 
-    # Formatar os dados para a resposta JSON
-    items = [item.name for item in top_items_data]
-    quantities = [item.quantity for item in top_items_data]
+    item_names = [item.name for item in top_items]
+    quantities = [item.quantity for item in top_items]
 
     return jsonify({
-        'items': items,
+        'items': item_names,
         'quantities': quantities
     })
+```
