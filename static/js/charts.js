@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Dashboard charts initialization
-    initDashboardCharts();
-
     // Initialize charts on finance page if present
     if (document.getElementById('incomeExpenseChart')) {
         initFinanceCharts();
@@ -340,7 +337,7 @@ function initInventoryCharts() {
 
     if (inventoryStatusChart) {
         // Inventory Status Chart
-        fetch('/inventory/stats')
+        fetch('/stock/stats')
             .then(response => response.json())
             .then(data => {
                 new Chart(inventoryStatusChart, {
@@ -379,7 +376,7 @@ function initInventoryCharts() {
 
     if (topItemsChart) {
         // Top Items Chart
-        fetch('/inventory/top-items')
+        fetch('/stock/top-items')
             .then(response => response.json())
             .then(data => {
                 new Chart(topItemsChart, {
