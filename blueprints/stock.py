@@ -1,10 +1,9 @@
-# Adding routes stats and top-items to the blueprint stock
-
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from app import db
-from models import StockItem, Supplier
+from models import StockItem
 from forms import StockItemForm, SearchForm
+from sqlalchemy import desc, func
 from datetime import datetime
 
 stock_bp = Blueprint('stock', __name__, url_prefix='/stock')
@@ -118,28 +117,32 @@ def update_quantity(item_id):
 
 @stock_bp.route('/stats')
 @login_required
-def stats():
-    # Get inventory statistics for charts
-    normal_stock = StockItem.query.filter(StockItem.quantity > StockItem.minimum_stock).count()
-    low_stock = StockItem.query.filter(StockItem.quantity <= StockItem.minimum_stock, StockItem.quantity > 0).count()
-    out_of_stock = StockItem.query.filter(StockItem.quantity == 0).count()
+def stock_stats():
+    # Contagem de itens por status de estoque
+    normal_count = StockItem.query.filter(StockItem.quantity > StockItem.minimum_stock).count()
+    low_count = StockItem.query.filter(
+        StockItem.quantity > 0, 
+        StockItem.quantity <= StockItem.minimum_stock
+    ).count()
+    out_count = StockItem.query.filter(StockItem.quantity <= 0).count()
 
     return jsonify({
-        'normal': normal_stock,
-        'low': low_stock,
-        'out': out_of_stock
+        'normal': normal_count,
+        'low': low_count,
+        'out': out_count
     })
 
 @stock_bp.route('/top-items')
 @login_required
 def top_items():
-    # Get top 10 items by quantity
-    top_items = StockItem.query.order_by(StockItem.quantity.desc()).limit(10).all()
+    # Obter os 5 itens com maior quantidade em estoque
+    top_items_data = StockItem.query.order_by(desc(StockItem.quantity)).limit(5).all()
 
-    item_names = [item.name for item in top_items]
-    quantities = [item.quantity for item in top_items]
+    # Formatar os dados para a resposta JSON
+    items = [item.name for item in top_items_data]
+    quantities = [item.quantity for item in top_items_data]
 
     return jsonify({
-        'items': item_names,
+        'items': items,
         'quantities': quantities
     })
