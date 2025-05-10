@@ -1,7 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField, SelectField, DateField, DecimalField, IntegerField, BooleanField, FileField, HiddenField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional, NumberRange
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Optional, NumberRange, ValidationError
 from flask_wtf.file import FileAllowed
+from datetime import date
+
+from models import User
 
 # Authentication Forms
 class LoginForm(FlaskForm):
@@ -14,6 +17,74 @@ class ChangePasswordForm(FlaskForm):
     new_password = PasswordField('Nova Senha', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirmar Nova Senha', validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Alterar Senha')
+
+class UserForm(FlaskForm):
+    # Informações da conta
+    username = StringField('Nome de Usuário', validators=[
+        DataRequired(),
+        Length(min=3, max=64, message="O nome de usuário deve ter entre 3 e 64 caracteres")
+    ])
+    email = StringField('Email', validators=[
+        DataRequired(),
+        Email(message="Por favor, insira um endereço de email válido")
+    ])
+    password = PasswordField('Senha', validators=[
+        Optional(),
+        Length(min=6, message='A senha deve ter pelo menos 6 caracteres')
+    ])
+    role = SelectField('Nível de Acesso', choices=[
+        ('admin', 'Administrador'),
+        ('management', 'Gerência'),
+        ('employee', 'Funcionário')
+    ], validators=[DataRequired()])
+    
+    # Informações do funcionário
+    first_name = StringField('Nome', validators=[
+        DataRequired(),
+        Length(min=2, max=50, message="O nome deve ter entre 2 e 50 caracteres")
+    ])
+    last_name = StringField('Sobrenome', validators=[
+        DataRequired(),
+        Length(min=2, max=50, message="O sobrenome deve ter entre 2 e 50 caracteres")
+    ])
+    position = StringField('Cargo', validators=[
+        DataRequired(),
+        Length(max=100, message="O cargo deve ter no máximo 100 caracteres")
+    ])
+    department = StringField('Departamento', validators=[
+        DataRequired(),
+        Length(max=100, message="O departamento deve ter no máximo 100 caracteres")
+    ])
+    phone = StringField('Telefone', validators=[
+        Optional(),
+        Length(max=20, message="O telefone deve ter no máximo 20 caracteres")
+    ])
+    hire_date = DateField('Data de Contratação', format='%Y-%m-%d', validators=[
+        DataRequired()
+    ])
+    active = BooleanField('Ativo', default=True)
+    
+    submit = SubmitField('Salvar')
+    
+    def __init__(self, original_username=None, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        self.original_username = original_username
+        
+    def validate_username(self, username):
+        if self.original_username and self.original_username == username.data:
+            return
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('Este nome de usuário já está em uso. Por favor, escolha outro.')
+            
+    def validate_email(self, email):
+        if self.original_username:
+            user = User.query.filter_by(username=self.original_username).first()
+            if user and user.email == email.data:
+                return
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Este email já está em uso. Por favor, escolha outro.')
 
 # Employee Forms
 class EmployeeForm(FlaskForm):

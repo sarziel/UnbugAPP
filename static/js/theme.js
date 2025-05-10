@@ -1,21 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Get the theme toggle button
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
+    const themeToggle = document.getElementById('header-theme-toggle');
     
     // Function to set theme
     function setTheme(theme) {
         document.body.className = theme;
         localStorage.setItem('theme', theme);
         
-        // Update the icon
-        if (theme === 'dark-theme') {
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-        } else {
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-        }
+        // Update all theme icons
+        const icons = document.querySelectorAll('#header-theme-toggle i');
+        icons.forEach(icon => {
+            if (theme === 'dark-theme') {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
     }
     
     // Check for saved theme preference or use default

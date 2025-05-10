@@ -81,28 +81,16 @@ def users():
 @security_bp.route('/user/new', methods=['GET', 'POST'])
 def new_user():
     """Criar novo usuário"""
-    form = forms.EmployeeForm()
+    form = forms.UserForm()
     
     if form.validate_on_submit():
-        # Verificar se username ou email já existem
-        existing_user = User.query.filter(
-            (User.username == form.username.data) | 
-            (User.email == form.email.data)
-        ).first()
-        
-        if existing_user:
-            if existing_user.username == form.username.data:
-                flash(f'Nome de usuário "{form.username.data}" já está em uso.', 'danger')
-            else:
-                flash(f'Email "{form.email.data}" já está em uso.', 'danger')
-            return render_template('security/user_form.html', form=form, title="Novo Usuário")
-        
         # Criar novo usuário
         user = User()
         user.username = form.username.data
         user.email = form.email.data
         user.set_password(form.password.data)
         user.role = form.role.data
+        user._is_active = form.active.data
         
         # Criar funcionário associado
         employee = Employee()
@@ -137,24 +125,32 @@ def edit_user(id):
         flash('Usuário não possui perfil de funcionário associado.', 'danger')
         return redirect(url_for('security.users'))
     
-    form = forms.EditEmployeeForm(obj=employee)
+    form = forms.UserForm(original_username=user.username)
     
-    # Pré-preencher campos de usuário
+    # Pré-preencher o formulário na requisição GET
     if request.method == 'GET':
+        form.username.data = user.username
         form.email.data = user.email
         form.role.data = user.role
+        form.active.data = user._is_active
+        
+        form.first_name.data = employee.first_name
+        form.last_name.data = employee.last_name
+        form.position.data = employee.position
+        form.department.data = employee.department
+        form.phone.data = employee.phone
+        form.hire_date.data = employee.hire_date
     
     if form.validate_on_submit():
-        # Verificar se o email (se alterado) já está em uso
-        if form.email.data != user.email:
-            existing_user = User.query.filter_by(email=form.email.data).first()
-            if existing_user:
-                flash(f'Email "{form.email.data}" já está em uso.', 'danger')
-                return render_template('security/user_form.html', form=form, title="Editar Usuário")
-        
         # Atualizar usuário
+        user.username = form.username.data
         user.email = form.email.data
         user.role = form.role.data
+        user._is_active = form.active.data
+        
+        # Se uma nova senha foi fornecida, atualizar
+        if form.password.data:
+            user.set_password(form.password.data)
         
         # Atualizar funcionário
         employee.first_name = form.first_name.data
