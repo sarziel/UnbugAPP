@@ -44,8 +44,14 @@ def create_app():
         # Import models
         from models import User, Employee, Client, Supplier, ServiceOrder, Project, InventoryItem, FinancialEntry
         
-        # Create database tables
-        db.create_all()
+        # Create or update database tables
+        with app.app_context():
+            db.create_all()
+            # Enable automatic table updates
+            for table in db.metadata.tables.values():
+                for column in table.columns:
+                    column.nullable = True
+            db.session.commit()
         
         # Create admin user if not exists
         from werkzeug.security import generate_password_hash
