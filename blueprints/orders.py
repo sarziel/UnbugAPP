@@ -245,7 +245,7 @@ def generate_project_pdf(project, include_budget=True):
     pdf.cell(0, 10, f'Documento gerado em {datetime.now().strftime("%d/%m/%Y %H:%M")}', ln=True, align='C')
     pdf.cell(0, 10, 'Unbug Solutions TI - Todos os direitos reservados', align='C')
     
-    return pdf.output(dest='S').encode('latin1')
+    return pdf.output(dest='S')
 
 @orders_bp.route('/projects/budget/<int:project_id>', methods=['POST'])
 @login_required

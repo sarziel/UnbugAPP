@@ -135,12 +135,12 @@
                                     </a>
 
                                     <!-- Budget Modal -->
-                                    <div class="modal fade" id="budgetModal{{ project.id }}" tabindex="-1">
+                                    <div class="modal fade" id="budgetModal{{ project.id }}" tabindex="-1" aria-labelledby="budgetModalLabel{{ project.id }}" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title">Atualizar Orçamento</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    <h5 class="modal-title" id="budgetModalLabel{{ project.id }}">Atualizar Orçamento</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <form action="{{ url_for('orders.update_budget', project_id=project.id) }}" method="post">
                                                     <div class="modal-body">
@@ -159,12 +159,12 @@
                                     </div>
 
                                     <!-- Email Modal -->
-                                    <div class="modal fade" id="emailModal{{ project.id }}" tabindex="-1">
+                                    <div class="modal fade" id="emailModal{{ project.id }}" tabindex="-1" aria-labelledby="emailModalLabel{{ project.id }}" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title">Enviar Projeto</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    <h5 class="modal-title" id="emailModalLabel{{ project.id }}">Enviar Projeto</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <form action="{{ url_for('orders.send_project', project_id=project.id) }}" method="post">
                                                     <div class="modal-body">
