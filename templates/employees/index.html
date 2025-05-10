@@ -138,7 +138,7 @@
                         {% set _ = departments.update({employee.department: 1}) %}
                     {% endif %}
                 {% endfor %}
-                
+
                 <div class="table-responsive">
                     <table class="table table-sm table-hover">
                         <thead>
@@ -160,7 +160,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6">
         <div class="card shadow">
             <div class="card-header bg-primary text-white">
@@ -181,7 +181,7 @@
                         {% set _ = user_roles.update({'no_access': user_roles['no_access'] + 1}) %}
                     {% endif %}
                 {% endfor %}
-                
+
                 <div class="table-responsive">
                     <table class="table table-sm table-hover">
                         <thead>
