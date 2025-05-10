@@ -43,67 +43,44 @@
             <li class="nav-item-header">Operações</li>
             
             <li class="nav-item">
-                <a href="#" class="has-submenu {% if request.path.startswith('/orders') %}active{% endif %}">
+                <a href="{{ url_for('orders.index') }}" class="{% if request.path.startswith('/orders') %}active{% endif %}">
                     <i class="fas fa-clipboard-list"></i> Ordens & Projetos
                 </a>
             </li>
-            <ul class="nav-submenu {% if request.path.startswith('/orders') %}show{% endif %}">
-                <li><a href="{{ url_for('orders.index') }}">Ordens de Serviço</a></li>
-                <li><a href="{{ url_for('orders.create_order') }}">Nova Ordem</a></li>
-                <li><a href="{{ url_for('orders.projects') }}">Projetos</a></li>
-                <li><a href="{{ url_for('orders.create_project') }}">Novo Projeto</a></li>
-            </ul>
             
             {% if current_user.has_finance_access() %}
             <li class="nav-item">
-                <a href="#" class="has-submenu {% if request.path.startswith('/finance') %}active{% endif %}">
+                <a href="{{ url_for('finance.index') }}" class="{% if request.path.startswith('/finance') %}active{% endif %}">
                     <i class="fas fa-money-bill-wave"></i> Finanças
                 </a>
             </li>
-            <ul class="nav-submenu {% if request.path.startswith('/finance') %}show{% endif %}">
-                <li><a href="{{ url_for('finance.index') }}">Visão Geral</a></li>
-                <li><a href="{{ url_for('finance.create_entry') }}">Novo Lançamento</a></li>
-                <li><a href="{{ url_for('finance.sales') }}">Vendas</a></li>
-                <li><a href="{{ url_for('finance.purchases') }}">Compras</a></li>
-            </ul>
             {% endif %}
             
             <li class="nav-item-header">Entidades</li>
             
             <li class="nav-item">
-                <a href="#" class="has-submenu {% if request.path.startswith('/clients') %}active{% endif %}">
-                    <i class="fas fa-users"></i> Clientes & Fornecedores
+                <a href="{{ url_for('clients.index') }}" class="{% if request.path.startswith('/clients') %}active{% endif %}">
+                    <i class="fas fa-users"></i> Clientes
                 </a>
             </li>
-            <ul class="nav-submenu {% if request.path.startswith('/clients') %}show{% endif %}">
-                <li><a href="{{ url_for('clients.index') }}">Clientes</a></li>
-                <li><a href="{{ url_for('clients.create_client') }}">Novo Cliente</a></li>
-                <li><a href="{{ url_for('clients.suppliers') }}">Fornecedores</a></li>
-                <li><a href="{{ url_for('clients.create_supplier') }}">Novo Fornecedor</a></li>
-            </ul>
             
             <li class="nav-item">
-                <a href="#" class="has-submenu {% if request.path.startswith('/inventory') %}active{% endif %}">
+                <a href="{{ url_for('clients.suppliers') }}" class="{% if request.path == url_for('clients.suppliers') %}active{% endif %}">
+                    <i class="fas fa-truck"></i> Fornecedores
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="{{ url_for('inventory.index') }}" class="{% if request.path.startswith('/inventory') %}active{% endif %}">
                     <i class="fas fa-boxes"></i> Inventário
                 </a>
             </li>
-            <ul class="nav-submenu {% if request.path.startswith('/inventory') %}show{% endif %}">
-                <li><a href="{{ url_for('inventory.index') }}">Estoque</a></li>
-                <li><a href="{{ url_for('inventory.create_item') }}">Novo Item</a></li>
-                <li><a href="{{ url_for('inventory.store') }}">Loja Web</a></li>
-            </ul>
             
             <li class="nav-item">
-                <a href="#" class="has-submenu {% if request.path.startswith('/employees') %}active{% endif %}">
+                <a href="{{ url_for('employees.index') }}" class="{% if request.path.startswith('/employees') %}active{% endif %}">
                     <i class="fas fa-id-card"></i> Funcionários
                 </a>
             </li>
-            <ul class="nav-submenu {% if request.path.startswith('/employees') %}show{% endif %}">
-                <li><a href="{{ url_for('employees.index') }}">Listar Todos</a></li>
-                {% if current_user.is_management() %}
-                <li><a href="{{ url_for('employees.create') }}">Novo Funcionário</a></li>
-                {% endif %}
-            </ul>
             
             {% if current_user.has_security_access() %}
             <li class="nav-item-header">Sistema</li>
