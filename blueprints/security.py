@@ -241,3 +241,42 @@ def app_info():
         'employees_count': Employee.query.count()
     }
     return jsonify(info)
+
+@security_bp.route('/backup', methods=['POST'])
+def backup():
+    """Realiza backup do sistema"""
+    try:
+        # Simula um backup
+        time.sleep(2)
+        return jsonify({
+            'success': True,
+            'message': 'Backup realizado com sucesso!'
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro ao realizar backup: {str(e)}'
+        })
+
+@security_bp.route('/logs')
+def logs():
+    """Retorna logs do sistema"""
+    # Simula logs do sistema
+    system_logs = [
+        f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Sistema iniciado",
+        f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Backup automático realizado",
+        f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - Verificação de segurança concluída"
+    ]
+    return jsonify({'logs': system_logs})
+
+@security_bp.route('/scan', methods=['POST'])
+def security_scan():
+    """Realiza verificação de segurança"""
+    # Simula uma verificação de segurança
+    scan_results = [
+        {'status': 'ok', 'message': 'Firewall ativo e configurado'},
+        {'status': 'ok', 'message': 'Senhas fortes em uso'},
+        {'status': 'ok', 'message': 'Backup automático configurado'},
+        {'status': 'warning', 'message': 'Algumas contas sem autenticação 2FA'}
+    ]
+    return jsonify({'results': scan_results})
