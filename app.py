@@ -44,11 +44,14 @@ def create_app():
     # Configure database
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///unbug.db")
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-        "pool_recycle": 300,
+        "pool_size": 5,
+        "pool_recycle": 280,
         "pool_pre_ping": True,
+        "pool_timeout": 30,
+        "max_overflow": 10
     }
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-    app.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"] = True
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_ECHO"] = True  # Log SQL queries for debugging
     
     # Initialize extensions with app
     db.init_app(app)
@@ -62,13 +65,18 @@ def create_app():
         from models import User, Employee, Client, Supplier, ServiceOrder, Project, InventoryItem, FinancialEntry
         
         # Create or update database tables
-        with app.app_context():
-            db.create_all()
-            # Enable automatic table updates
-            for table in db.metadata.tables.values():
-                for column in table.columns:
-                    column.nullable = True
-            db.session.commit()
+        try:
+            with app.app_context():
+                db.create_all()
+                # Enable automatic table updates
+                for table in db.metadata.tables.values():
+                    for column in table.columns:
+                        column.nullable = True
+                db.session.commit()
+                app.logger.info("Database tables created/updated successfully")
+        except Exception as e:
+            app.logger.error(f"Database initialization error: {str(e)}")
+            db.session.rollback()
         
         # Create admin user if not exists
         from werkzeug.security import generate_password_hash
