@@ -17,9 +17,8 @@ function initDashboardCharts() {
     const serviceOrderStatusChart = document.getElementById('serviceOrderStatusChart');
     const projectStatusChart = document.getElementById('projectStatusChart');
     const monthlyFinanceChart = document.getElementById('monthlyFinanceChart');
-    
+
     if (serviceOrderStatusChart) {
-        // Service Order Status Chart
         fetch('/dashboard/service-order-stats')
             .then(response => response.json())
             .then(data => {
@@ -48,19 +47,19 @@ function initDashboardCharts() {
                         maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                position: 'bottom'
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12
+                                }
                             }
                         }
                     }
                 });
             })
-            .catch(error => {
-                console.error('Error fetching service order stats:', error);
-            });
+            .catch(error => console.error('Error:', error));
     }
-    
+
     if (projectStatusChart) {
-        // Project Status Chart
         fetch('/dashboard/project-stats')
             .then(response => response.json())
             .then(data => {
@@ -91,15 +90,16 @@ function initDashboardCharts() {
                         maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                position: 'bottom'
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12
+                                }
                             }
                         }
                     }
                 });
             })
-            .catch(error => {
-                console.error('Error fetching project stats:', error);
-            });
+            .catch(error => console.error('Error:', error));
     }
     
     if (monthlyFinanceChart) {

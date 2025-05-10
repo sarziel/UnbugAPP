@@ -126,6 +126,88 @@ def view_client(client_id):
 def suppliers():
     search_form = SearchForm()
     
+    # Query based on search parameters
+    query = Supplier.query
+    
+    if request.args.get('query'):
+        search_term = f"%{request.args.get('query')}%"
+        query = query.filter(
+            Supplier.name.like(search_term) | 
+            Supplier.email.like(search_term) |
+            Supplier.phone.like(search_term)
+        )
+    
+    # Get only active suppliers by default
+    if not request.args.get('show_inactive'):
+        query = query.filter_by(active=True)
+        
+    suppliers = query.order_by(Supplier.name).all()
+    return render_template('clients/suppliers.html', 
+                         suppliers=suppliers,
+                         search_form=search_form)
+
+@clients_bp.route('/suppliers/create', methods=['GET', 'POST'])
+@login_required
+def create_supplier():
+    form = SupplierForm()
+    
+    if form.validate_on_submit():
+        supplier = Supplier(
+            name=form.name.data,
+            email=form.email.data,
+            phone=form.phone.data,
+            address=form.address.data,
+            city=form.city.data,
+            state=form.state.data,
+            zip_code=form.zip_code.data,
+            contact_person=form.contact_person.data
+        )
+        db.session.add(supplier)
+        db.session.commit()
+        
+        flash('Fornecedor criado com sucesso!', 'success')
+        return redirect(url_for('clients.suppliers'))
+        
+    return render_template('clients/create_supplier.html', form=form)
+
+@clients_bp.route('/suppliers/<int:supplier_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_supplier(supplier_id):
+    supplier = Supplier.query.get_or_404(supplier_id)
+    form = SupplierForm(obj=supplier)
+    
+    if form.validate_on_submit():
+        supplier.name = form.name.data
+        supplier.email = form.email.data
+        supplier.phone = form.phone.data
+        supplier.address = form.address.data
+        supplier.city = form.city.data
+        supplier.state = form.state.data
+        supplier.zip_code = form.zip_code.data
+        supplier.contact_person = form.contact_person.data
+        
+        db.session.commit()
+        flash('Fornecedor atualizado com sucesso!', 'success')
+        return redirect(url_for('clients.suppliers'))
+        
+    return render_template('clients/edit_supplier.html', form=form, supplier=supplier)
+
+@clients_bp.route('/suppliers/<int:supplier_id>/delete', methods=['POST'])
+@login_required
+def delete_supplier(supplier_id):
+    if not current_user.can_delete():
+        flash('Você não tem permissão para excluir fornecedores.', 'danger')
+        return redirect(url_for('clients.suppliers'))
+        
+    supplier = Supplier.query.get_or_404(supplier_id)
+    supplier.active = False
+    db.session.commit()
+    
+    flash('Fornecedor excluído com sucesso!', 'success')
+    return redirect(url_for('clients.suppliers'))equired
+def suppliers():
+    search_form = SearchForm()
+    
     # Query based on search parameters if any
     query = Supplier.query
     
