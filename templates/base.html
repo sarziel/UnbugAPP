@@ -43,8 +43,13 @@
             <li class="nav-item-header">Operações</li>
 
             <li class="nav-item">
-                <a href="{{ url_for('orders.index') }}" class="{% if request.path.startswith('/orders') %}active{% endif %}">
-                    <i class="fas fa-clipboard-list"></i> Ordens & Projetos
+                <a href="{{ url_for('orders.index') }}" class="{% if request.path == url_for('orders.index') %}active{% endif %}">
+                    <i class="fas fa-clipboard-list"></i> Ordens de Serviço
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('orders.projects') }}" class="{% if request.path == url_for('orders.projects') %}active{% endif %}">
+                    <i class="fas fa-project-diagram"></i> Projetos
                 </a>
             </li>
 
