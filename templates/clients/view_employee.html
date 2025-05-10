@@ -1,6 +1,8 @@
 
 {% extends 'base.html' %}
 
+{% block title %}{{ employee.full_name }} | Unbug Solutions TI{% endblock %}
+
 {% block content %}
 <div class="container-fluid px-4">
     <div class="row mb-4">
@@ -9,7 +11,7 @@
             <p class="text-muted">{{ employee.position }} - {{ employee.department }}</p>
         </div>
         <div class="col-md-4 text-end">
-            <a href="{{ url_for('clients.index') }}" class="btn btn-secondary">
+            <a href="{{ url_for('employees.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Voltar
             </a>
         </div>
@@ -18,7 +20,7 @@
     <div class="row">
         <!-- Informações Básicas -->
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Informações Básicas</h5>
                 </div>
@@ -47,11 +49,9 @@
                         </li>
                         <li class="list-group-item">
                             <strong>Status:</strong><br>
-                            {% if employee.active %}
-                            <span class="badge bg-success">Ativo</span>
-                            {% else %}
-                            <span class="badge bg-danger">Inativo</span>
-                            {% endif %}
+                            <span class="badge {% if employee.active %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if employee.active %}Ativo{% else %}Inativo{% endif %}
+                            </span>
                         </li>
                     </ul>
                 </div>
@@ -60,7 +60,7 @@
 
         <!-- Informações Profissionais -->
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header bg-info text-white">
                     <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i>Informações Profissionais</h5>
                 </div>
@@ -71,15 +71,12 @@
                             {{ employee.hire_date.strftime('%d/%m/%Y') }}
                         </li>
                         <li class="list-group-item">
-                            <strong>Tempo de Empresa:</strong><br>
-                            {% set days_employed = (now - employee.hire_date).days %}
-                            {% if days_employed < 30 %}
-                                {{ days_employed }} dias
-                            {% elif days_employed < 365 %}
-                                {{ (days_employed / 30) | int }} meses
-                            {% else %}
-                                {{ (days_employed / 365) | int }} anos
-                            {% endif %}
+                            <strong>Data de Cadastro:</strong><br>
+                            {{ employee.created_at.strftime('%d/%m/%Y') }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Última Atualização:</strong><br>
+                            {{ employee.updated_at.strftime('%d/%m/%Y') }}
                         </li>
                         <li class="list-group-item">
                             <strong>Email Profissional:</strong><br>
@@ -89,9 +86,26 @@
                                 Não cadastrado
                             {% endif %}
                         </li>
-                        <li class="list-group-item">
-                            <strong>Nível de Acesso:</strong><br>
-                            {% if employee.user %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acesso ao Sistema -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-key me-2"></i>Acesso ao Sistema</h5>
+                </div>
+                <div class="card-body">
+                    {% if employee.user %}
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Nome de Usuário:</strong><br>
+                                {{ employee.user.username }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Nível de Acesso:</strong><br>
                                 {% if employee.user.role == 'admin' %}
                                     <span class="badge bg-danger">Administrador</span>
                                 {% elif employee.user.role == 'management' %}
@@ -99,64 +113,27 @@
                                 {% else %}
                                     <span class="badge bg-primary">Funcionário</span>
                                 {% endif %}
-                            {% else %}
-                                <span class="badge bg-secondary">Sem Acesso</span>
-                            {% endif %}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Estatísticas -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Estatísticas</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row text-center mb-4">
-                        <div class="col-6">
-                            <h3>{{ service_orders|length }}</h3>
-                            <p class="text-muted mb-0">Ordens de Serviço</p>
-                        </div>
-                        <div class="col-6">
-                            <h3>{{ projects|length }}</h3>
-                            <p class="text-muted mb-0">Projetos</p>
-                        </div>
-                    </div>
-
-                    {% if service_orders %}
-                    <div class="mb-4">
-                        <h6>Status das Ordens</h6>
-                        <div class="progress" style="height: 25px;">
-                            {% set stats = {'open': 0, 'in_progress': 0, 'completed': 0, 'cancelled': 0} %}
-                            {% for order in service_orders %}
-                                {% if order.status == 'open' %}
-                                    {% set _ = stats.update({'open': stats['open'] + 1}) %}
-                                {% elif order.status == 'in_progress' %}
-                                    {% set _ = stats.update({'in_progress': stats['in_progress'] + 1}) %}
-                                {% elif order.status == 'completed' %}
-                                    {% set _ = stats.update({'completed': stats['completed'] + 1}) %}
-                                {% elif order.status == 'cancelled' %}
-                                    {% set _ = stats.update({'cancelled': stats['cancelled'] + 1}) %}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Status da Conta:</strong><br>
+                                <span class="badge {% if employee.user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                    {% if employee.user.is_active %}Ativa{% else %}Inativa{% endif %}
+                                </span>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Último Login:</strong><br>
+                                {% if employee.user.last_login %}
+                                    {{ employee.user.last_login.strftime('%d/%m/%Y %H:%M') }}
+                                {% else %}
+                                    Nunca acessou
                                 {% endif %}
-                            {% endfor %}
-
-                            {% for status, count in stats.items() %}
-                                {% if count > 0 %}
-                                    <div class="progress-bar bg-{{ 'info' if status == 'open' 
-                                                                else 'primary' if status == 'in_progress'
-                                                                else 'success' if status == 'completed'
-                                                                else 'danger' }}"
-                                         style="width: {{ (count / service_orders|length * 100)|round|int }}%"
-                                         title="{{ status|title }}: {{ count }}">
-                                        {{ count }}
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
+                            </li>
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Este funcionário não possui credenciais de acesso ao sistema.
                         </div>
-                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -173,7 +150,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
 }
 
 .initials {
@@ -181,6 +158,15 @@
     color: white;
     font-weight: bold;
     text-transform: uppercase;
+}
+
+.list-group-item {
+    padding: 1rem;
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
 }
 </style>
 {% endblock %}
