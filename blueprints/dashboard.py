@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, jsonify
 from flask_login import login_required, current_user
 from sqlalchemy import func
 from datetime import datetime, timedelta
-from models import ServiceOrder, Project, InventoryItem, FinancialEntry
+from models import ServiceOrder, Project, StockItem, StoreItem, FinancialEntry
 from app import db
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
@@ -25,8 +25,8 @@ def index():
             'balance': income - expenses
         }
     
-    # Low stock inventory items
-    low_stock_items = InventoryItem.query.filter(InventoryItem.quantity <= InventoryItem.minimum_stock).count()
+    # Low stock items
+    low_stock_items = StockItem.query.filter(StockItem.quantity <= StockItem.minimum_stock).count()
     
     # Recent service orders
     recent_orders = ServiceOrder.query.order_by(ServiceOrder.created_at.desc()).limit(5).all()
