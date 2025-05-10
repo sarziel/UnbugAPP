@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeSelector) {
         const clientFields = document.getElementById('client-fields');
         const supplierFields = document.getElementById('supplier-fields');
-        
+
         typeSelector.addEventListener('change', function() {
             if (this.value === 'income') {
                 if (clientFields) clientFields.style.display = 'block';
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (supplierFields) supplierFields.style.display = 'block';
             }
         });
-        
+
         // Trigger change event to set initial state
         if (typeSelector.value) {
             const event = new Event('change');
