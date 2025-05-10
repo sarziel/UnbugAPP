@@ -204,7 +204,7 @@ def delete_supplier(supplier_id):
     db.session.commit()
     
     flash('Fornecedor excluído com sucesso!', 'success')
-    return redirect(url_for('clients.suppliers'))equired
+    return redirect(url_for('clients.suppliers'))
 def suppliers():
     search_form = SearchForm()
     
