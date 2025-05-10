@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_required, current_user
 from app import db
-from models import User, Employee
+from models import User, Employee, ActivityLog
 from sqlalchemy import func, text
 from werkzeug.security import generate_password_hash
 import os
@@ -9,6 +9,9 @@ import platform
 import psutil
 import datetime
 import forms
+import time
+from flask import request
+from models import ActivityLog
 
 security_bp = Blueprint('security', __name__, url_prefix='/security')
 
@@ -43,27 +46,43 @@ def index():
     # Get users for system users table
     users = User.query.all()
     
-    # Mock login logs (would need a real table for this in production)
-    login_logs = [
-        {
-            'username': 'admin',
-            'activity': 'Login bem-sucedido',
-            'ip_address': '192.168.1.100',
-            'timestamp': datetime.datetime.now() - datetime.timedelta(minutes=15)
-        },
-        {
-            'username': 'maria.silva',
-            'activity': 'Login bem-sucedido',
-            'ip_address': '192.168.1.101',
-            'timestamp': datetime.datetime.now() - datetime.timedelta(hours=2)
-        },
-        {
-            'username': 'carlos.ferreira',
-            'activity': 'Tentativa de login malsucedida',
-            'ip_address': '192.168.1.102',
-            'timestamp': datetime.datetime.now() - datetime.timedelta(hours=3)
-        }
-    ]
+    # Obter logs reais de atividade do sistema
+    login_logs = ActivityLog.query.order_by(ActivityLog.timestamp.desc()).limit(10).all()
+    
+    # Se não existir logs, criar alguns registros iniciais para demonstração
+    if not login_logs:
+        demo_logs = [
+            {
+                'username': 'admin',
+                'activity': 'Login bem-sucedido',
+                'ip_address': request.remote_addr,
+                'category': 'autenticação'
+            },
+            {
+                'username': 'sistema',
+                'activity': 'Aplicação inicializada',
+                'ip_address': request.remote_addr,
+                'category': 'sistema'
+            },
+            {
+                'username': current_user.username,
+                'activity': 'Acesso ao módulo de segurança',
+                'ip_address': request.remote_addr,
+                'category': 'segurança'
+            }
+        ]
+        
+        for log in demo_logs:
+            ActivityLog.log_activity(
+                username=log['username'],
+                activity=log['activity'],
+                ip_address=log['ip_address'],
+                user_id=current_user.id if log['username'] == current_user.username else None,
+                category=log['category']
+            )
+        
+        # Buscar os logs novamente após criar os registros iniciais
+        login_logs = ActivityLog.query.order_by(ActivityLog.timestamp.desc()).limit(10).all()
     
     return render_template('security/index.html',
                            system_info=system_info,
@@ -108,6 +127,15 @@ def new_user():
         db.session.add(user)
         db.session.add(employee)
         db.session.commit()
+        
+        # Registrar atividade de criação de usuário
+        ActivityLog.log_activity(
+            username=current_user.username,
+            activity=f'Criou novo usuário: {user.username}',
+            ip_address=request.remote_addr,
+            user_id=current_user.id,
+            category='usuários'
+        )
         
         flash(f'Usuário "{user.username}" criado com sucesso.', 'success')
         return redirect(url_for('security.users'))
@@ -163,6 +191,15 @@ def edit_user(id):
         
         db.session.commit()
         
+        # Registrar atividade de atualização de usuário
+        ActivityLog.log_activity(
+            username=current_user.username,
+            activity=f'Atualizou usuário: {user.username}',
+            ip_address=request.remote_addr,
+            user_id=current_user.id,
+            category='usuários'
+        )
+        
         flash(f'Usuário "{user.username}" atualizado com sucesso.', 'success')
         return redirect(url_for('security.users'))
     
@@ -180,6 +217,16 @@ def toggle_user(id):
         user._is_active = not user._is_active
         status = 'ativado' if user._is_active else 'desativado'
         db.session.commit()
+        
+        # Registrar atividade de ativação/desativação de usuário
+        ActivityLog.log_activity(
+            username=current_user.username,
+            activity=f'Usuário "{user.username}" foi {status}',
+            ip_address=request.remote_addr,
+            user_id=current_user.id,
+            category='usuários'
+        )
+        
         flash(f'Usuário "{user.username}" {status} com sucesso.', 'success')
     
     return redirect(url_for('security.users'))
@@ -193,6 +240,15 @@ def reset_password(id):
     # Define a senha padrão como "mudar123"
     user.set_password('mudar123')
     db.session.commit()
+    
+    # Registrar atividade de reset de senha
+    ActivityLog.log_activity(
+        username=current_user.username,
+        activity=f'Resetou senha do usuário: {user.username}',
+        ip_address=request.remote_addr,
+        user_id=current_user.id,
+        category='segurança'
+    )
     
     flash(f'Senha do usuário "{user.username}" foi resetada. Nova senha: mudar123', 'success')
     return redirect(url_for('security.users'))

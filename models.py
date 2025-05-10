@@ -264,6 +264,35 @@ class FinancialEntry(db.Model):
     file_path = db.Column(db.String(300))
 
 
+# Activity Log for system activities
+class ActivityLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), nullable=False)
+    activity = db.Column(db.String(200), nullable=False)
+    ip_address = db.Column(db.String(50))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    category = db.Column(db.String(50), default='sistema')  # sistema, usuario, seguranca, etc
+
+    # User relationship (optional - if activity is related to a user)
+    user_id = db.Column(db.Integer, ForeignKey('user.id'), nullable=True)
+    user = relationship("User", backref=db.backref("activities", lazy="dynamic"))
+    
+    @staticmethod
+    def log_activity(username, activity, ip_address=None, user_id=None, category='sistema'):
+        log = ActivityLog(
+            username=username,
+            activity=activity,
+            ip_address=ip_address,
+            user_id=user_id,
+            category=category
+        )
+        db.session.add(log)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+
+
 # Trigger to update inventory when items are used in orders
 @event.listens_for(OrderItem, 'after_insert')
 def decrease_inventory_on_order(mapper, connection, target):
