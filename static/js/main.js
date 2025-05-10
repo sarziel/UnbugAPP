@@ -11,7 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const today = new Date();
         headerDateElement.textContent = today.toLocaleDateString('pt-BR', options);
     }
-    
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+
     // Theme toggle on both sidebar and header
     const themeToggles = document.querySelectorAll('.theme-toggle, #header-theme-toggle');
     themeToggles.forEach(toggle => {
@@ -44,12 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Initialize tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-
     // Initialize popovers
     var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
     var popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
