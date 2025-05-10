@@ -5,8 +5,8 @@
 {% block content %}
 <div class="row mb-4">
     <div class="col-md-8">
-        <h1 class="mb-3"><i class="fas fa-boxes me-2"></i>Inventário</h1>
-        <p class="text-muted">Gerencie o estoque de itens da empresa.</p>
+        <h1 class="mb-3"><i class="fas fa-boxes me-2"></i>Almoxarifado</h1>
+        <p class="text-muted">Gerencie o estoque e controle de materiais da empresa.</p>
     </div>
     <div class="col-md-4 text-end">
         <a href="{{ url_for('inventory.create_item') }}" class="btn btn-primary">
@@ -167,7 +167,7 @@
                                     </form>
                                     {% endif %}
                                 </div>
-                                
+
                                 <!-- Update Quantity Modal -->
                                 <div class="modal fade" id="updateQuantityModal{{ item.id }}" tabindex="-1" aria-labelledby="updateQuantityModalLabel{{ item.id }}" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -181,7 +181,7 @@
                                                     <p>Item: <strong>{{ item.name }}</strong> ({{ item.sku }})</p>
                                                     <p>Quantidade Atual: <strong>{{ item.quantity }}</strong></p>
                                                     <p>Estoque Mínimo: <strong>{{ item.minimum_stock }}</strong></p>
-                                                    
+
                                                     <div class="mb-3">
                                                         <label for="quantity{{ item.id }}" class="form-label">Nova Quantidade:</label>
                                                         <input type="number" class="form-control" id="quantity{{ item.id }}" name="quantity" min="0" value="{{ item.quantity }}">
