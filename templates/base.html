@@ -145,6 +145,9 @@
                     </div>
                     <div class="col-md-4">
                         <div class="header-user-menu d-flex justify-content-end align-items-center">
+                            <button class="btn btn-link text-decoration-none me-3" id="header-theme-toggle">
+                                <i class="fas fa-moon"></i>
+                            </button>
                             <div class="dropdown">
                                 <button class="header-user-button dropdown-toggle" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user-circle me-2"></i>
@@ -156,7 +159,6 @@
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="{{ url_for('auth.change_password') }}"><i class="fas fa-key me-2"></i>Alterar Senha</a></li>
-                                    <li><a class="dropdown-item" href="#" id="header-theme-toggle"><i class="fas fa-moon me-2"></i>Alternar Tema</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
                                 </ul>
