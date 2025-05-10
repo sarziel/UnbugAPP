@@ -185,6 +185,81 @@ def remove_item(order_id, item_id):
     return redirect(url_for('orders.view_order', order_id=order_id))
 
 # Projects Routes
+from fpdf import FPDF
+from flask_mail import Mail, Message
+
+mail = Mail()
+
+def generate_project_pdf(project):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font('Arial', 'B', 16)
+    pdf.cell(0, 10, 'Unbug Solutions TI - Projeto', ln=True, align='C')
+    pdf.line(10, 30, 200, 30)
+    
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, f'Projeto: {project.name}', ln=True)
+    pdf.cell(0, 10, f'Cliente: {project.client.name}', ln=True)
+    pdf.cell(0, 10, f'Gerente: {project.manager.full_name}', ln=True)
+    pdf.cell(0, 10, f'Status: {project.status}', ln=True)
+    pdf.cell(0, 10, f'Orçamento: R$ {project.budget}', ln=True)
+    pdf.multi_cell(0, 10, f'Descrição: {project.description}')
+    
+    return pdf.output(dest='S').encode('latin1')
+
+@orders_bp.route('/projects/budget/<int:project_id>', methods=['POST'])
+@login_required
+def update_budget(project_id):
+    project = Project.query.get_or_404(project_id)
+    budget = request.form.get('budget', type=float)
+    if budget:
+        project.budget = budget
+        db.session.commit()
+        flash('Orçamento atualizado com sucesso!', 'success')
+    return redirect(url_for('orders.projects'))
+
+@orders_bp.route('/projects/pdf/<int:project_id>')
+@login_required
+def download_project_pdf(project_id):
+    project = Project.query.get_or_404(project_id)
+    pdf_content = generate_project_pdf(project)
+    return send_file(
+        io.BytesIO(pdf_content),
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f'projeto_{project.id}.pdf'
+    )
+
+@orders_bp.route('/projects/send/<int:project_id>', methods=['POST'])
+@login_required
+def send_project(project_id):
+    project = Project.query.get_or_404(project_id)
+    recipient = request.form.get('email')
+    
+    if not recipient:
+        flash('Email do destinatário é obrigatório', 'error')
+        return redirect(url_for('orders.projects'))
+        
+    pdf_content = generate_project_pdf(project)
+    msg = Message(
+        f'Projeto: {project.name}',
+        sender='seu-email@unbug.com',
+        recipients=[recipient]
+    )
+    msg.body = f"""
+    Prezado cliente,
+    
+    Segue em anexo o projeto {project.name}.
+    
+    Atenciosamente,
+    Unbug Solutions TI
+    """
+    msg.attach(f"projeto_{project.id}.pdf", "application/pdf", pdf_content)
+    
+    mail.send(msg)
+    flash('Projeto enviado com sucesso!', 'success')
+    return redirect(url_for('orders.projects'))
+
 @orders_bp.route('/projects')
 @login_required
 def projects():
