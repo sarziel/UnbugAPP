@@ -35,13 +35,29 @@ function initDashboardCharts() {
                             ],
                             backgroundColor: [
                                 '#17a2b8',
-                                '#0a6ebd',
+                                '#0a6ebd', 
                                 '#28a745',
                                 '#dc3545'
                             ],
                             borderWidth: 1
                         }]
                     },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    boxWidth: 12,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
@@ -85,6 +101,22 @@ function initDashboardCharts() {
                             borderWidth: 1
                         }]
                     },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    boxWidth: 12,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
