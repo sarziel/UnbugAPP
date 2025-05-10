@@ -31,7 +31,7 @@ function initDashboardCharts() {
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        aspectRatio: 1.5,
                         plugins: {
                             legend: {
                                 position: 'bottom'
@@ -85,7 +85,7 @@ function initDashboardCharts() {
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        aspectRatio: 1.5,
                         plugins: {
                             legend: {
                                 position: 'bottom'
@@ -132,7 +132,7 @@ function initDashboardCharts() {
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        aspectRatio: 1.5,
                         plugins: {
                             legend: {
                                 position: 'bottom'
@@ -176,7 +176,7 @@ function initDashboardCharts() {
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        aspectRatio: 1.5,
                         scales: {
                             y: {
                                 beginAtZero: true
@@ -225,7 +225,7 @@ function initDashboardCharts() {
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        aspectRatio: 1.5,
                         scales: {
                             y: {
                                 ticks: {
@@ -277,7 +277,7 @@ function initFinanceCharts() {
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        aspectRatio: 1.5,
                         plugins: {
                             tooltip: {
                                 callbacks: {
@@ -320,7 +320,7 @@ function initFinanceCharts() {
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
-                        aspectRatio: 2,
+                        aspectRatio: 1.5,
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -369,4 +369,3 @@ document.addEventListener('DOMContentLoaded', function() {
         initFinanceCharts();
     }
 });
-```
