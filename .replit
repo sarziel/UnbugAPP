@@ -10,7 +10,7 @@ deploymentTarget = "autoscale"
 run = ["sh", "-c", "run"]
 
 [workflows]
-runButton = "Run Flask App"
+runButton = "Run Flask"
 
 [[workflows.workflow]]
 name = "Project"
@@ -38,6 +38,15 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "gunicorn --bind 0.0.0.0:5000 --reload --workers 1 --worker-class sync --capture-output --log-level info main:app"
+
+[[workflows.workflow]]
+name = "Run Flask"
+author = 42528036
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "gunicorn --bind 0.0.0.0:5000 --workers 1 --reload main:app"
 
 [[ports]]
 localPort = 5000
