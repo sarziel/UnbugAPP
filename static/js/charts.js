@@ -1,8 +1,7 @@
-
 // Função para inicializar os gráficos do Dashboard
 function initDashboardCharts() {
     console.log("Iniciando gráficos do dashboard");
-    
+
     // Gráfico de Status das Ordens de Serviço
     const serviceOrderStatusChart = document.getElementById('serviceOrderStatusChart');
     if (serviceOrderStatusChart) {
@@ -31,7 +30,8 @@ function initDashboardCharts() {
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2,
                         plugins: {
                             legend: {
                                 position: 'bottom'
@@ -84,7 +84,8 @@ function initDashboardCharts() {
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2,
                         plugins: {
                             legend: {
                                 position: 'bottom'
@@ -130,7 +131,8 @@ function initDashboardCharts() {
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2,
                         plugins: {
                             legend: {
                                 position: 'bottom'
@@ -173,7 +175,8 @@ function initDashboardCharts() {
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2,
                         scales: {
                             y: {
                                 beginAtZero: true
@@ -221,7 +224,8 @@ function initDashboardCharts() {
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2,
                         scales: {
                             y: {
                                 ticks: {
@@ -250,7 +254,7 @@ function initDashboardCharts() {
 // Função para inicializar os gráficos da página de Finanças
 function initFinanceCharts() {
     console.log("Inicializando gráficos de finanças");
-    
+
     // Gráfico de Receitas vs Despesas
     const incomeExpenseChart = document.getElementById('incomeExpenseChart');
     if (incomeExpenseChart) {
@@ -272,7 +276,8 @@ function initFinanceCharts() {
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2,
                         plugins: {
                             tooltip: {
                                 callbacks: {
@@ -314,7 +319,8 @@ function initFinanceCharts() {
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2,
                         scales: {
                             y: {
                                 beginAtZero: true,
@@ -347,7 +353,7 @@ function initFinanceCharts() {
 // Inicializar gráficos quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM carregado, verificando gráficos para inicializar");
-    
+
     // Inicializa gráficos do dashboard se estiverem presentes
     if (document.getElementById('serviceOrderStatusChart') || 
         document.getElementById('projectStatusChart') || 
@@ -363,3 +369,4 @@ document.addEventListener('DOMContentLoaded', function() {
         initFinanceCharts();
     }
 });
+```

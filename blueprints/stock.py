@@ -142,4 +142,4 @@ def top_items():
         'items': item_names,
         'quantities': quantities
     })
-```
+# Comentário para substituir o delimitador que estava causando erro
