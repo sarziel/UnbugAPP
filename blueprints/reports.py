@@ -310,6 +310,56 @@ def clients():
 def export_finance():
     start_date = request.args.get('start_date', (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d'))
     end_date = request.args.get('end_date', datetime.now().strftime('%Y-%m-%d'))
+    export_format = request.args.get('format', 'excel')
+
+    if export_format == 'pdf':
+        # Criar PDF
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font('Arial', 'B', 16)
+        pdf.cell(190, 10, 'Relatório Financeiro', 0, 1, 'C')
+        pdf.ln(10)
+
+        # Adicionar período
+        pdf.set_font('Arial', '', 12)
+        pdf.cell(190, 10, f'Período: {start_date} a {end_date}', 0, 1, 'L')
+        
+        # Buscar dados
+        entries = FinancialEntry.query.filter(
+            FinancialEntry.date >= datetime.strptime(start_date, '%Y-%m-%d'),
+            FinancialEntry.date <= datetime.strptime(end_date, '%Y-%m-%d')
+        ).order_by(FinancialEntry.date).all()
+
+        # Cabeçalho da tabela
+        pdf.set_font('Arial', 'B', 10)
+        pdf.cell(30, 7, 'Data', 1)
+        pdf.cell(30, 7, 'Tipo', 1)
+        pdf.cell(40, 7, 'Categoria', 1)
+        pdf.cell(30, 7, 'Valor', 1)
+        pdf.cell(60, 7, 'Descrição', 1)
+        pdf.ln()
+
+        # Dados da tabela
+        pdf.set_font('Arial', '', 10)
+        for entry in entries:
+            pdf.cell(30, 6, entry.date.strftime('%d/%m/%Y'), 1)
+            pdf.cell(30, 6, 'Receita' if entry.type == 'income' else 'Despesa', 1)
+            pdf.cell(40, 6, entry.category, 1)
+            pdf.cell(30, 6, f'R$ {float(entry.amount):.2f}', 1)
+            pdf.cell(60, 6, entry.description[:30], 1)
+            pdf.ln()
+
+        # Criar buffer para o PDF
+        pdf_output = BytesIO()
+        pdf.output(pdf_output)
+        pdf_output.seek(0)
+
+        return send_file(
+            pdf_output,
+            as_attachment=True,
+            download_name=f"relatorio_financeiro_{start_date}_{end_date}.pdf",
+            mimetype='application/pdf'
+        )
     
     # Converter strings para objetos datetime
     start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
