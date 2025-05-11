@@ -6,6 +6,7 @@ from io import BytesIO
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from fpdf import FPDF
 import os
 from app import db
 from models import ServiceOrder, Project, FinancialEntry, StockItem, Client, Supplier, Employee
