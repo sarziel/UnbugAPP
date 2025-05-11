@@ -46,7 +46,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "gunicorn --bind 0.0.0.0:5000 --workers 1 --reload --access-logfile - --error-logfile - main:app"
+args = "python -u main.py"
 
 [[ports]]
 localPort = 5000
