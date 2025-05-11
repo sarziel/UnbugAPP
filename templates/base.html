@@ -33,8 +33,10 @@
     <div id="sidebar" class="sidebar">
         <div class="sidebar-header">
             <div class="sidebar-brand">
-                <img src="{{ url_for('static', filename='img/unbug_symbol.png') }}" alt="Unbug Solutions TI Logo" class="logo-icon">
-                <span>Unbug Solutions</span>
+                <a href="{{ url_for('dashboard.index') }}" class="text-decoration-none text-white">
+                    <img src="{{ url_for('static', filename='img/unbug_symbol.png') }}" alt="Unbug Solutions TI Logo" class="logo-icon">
+                    <span>Unbug Solutions</span>
+                </a>
             </div>
         </div>
 
@@ -138,6 +140,7 @@
         <!-- App Header -->
         <header class="app-header">
             <div class="container-fluid">
+    {% if request.endpoint != 'dashboard.index' %}
     <div class="row mb-3">
         <div class="col">
             <button onclick="history.back()" class="btn btn-outline-secondary">
@@ -145,6 +148,7 @@
             </button>
         </div>
     </div>
+    {% endif %}
                 <div class="row align-items-center">
                     <div class="col-md-4 d-none d-md-block">
                         <div class="header-date">
