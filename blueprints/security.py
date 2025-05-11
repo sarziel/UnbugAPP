@@ -211,6 +211,61 @@ def toggle_user(id):
     """Ativa/desativa um usuário"""
     user = User.query.get_or_404(id)
     
+
+@security_bp.route('/config/git', methods=['GET', 'POST'])
+@login_required
+def git_config():
+    """Configuração de credenciais do Git"""
+    if request.method == 'POST':
+        username = request.form.get('git_username')
+        email = request.form.get('git_email')
+        token = request.form.get('git_token')
+        repo_url = request.form.get('git_repo')
+        
+        try:
+            # Configurar git globalmente
+            subprocess.run(['git', 'config', '--global', 'user.name', username])
+            subprocess.run(['git', 'config', '--global', 'user.email', email])
+            
+            # Armazenar credenciais (usa credential.helper store para salvar)
+            if repo_url and token:
+                # Extrair domínio do repo_url para configurar credenciais
+                repo_parts = repo_url.split('/')
+                if len(repo_parts) >= 3:
+                    domain = repo_parts[2]  # Exemplo: github.com
+                    
+                    # Configurar credencial helper
+                    subprocess.run(['git', 'config', '--global', 'credential.helper', 'store'])
+                    
+                    # Formar a URL com credenciais e salvar em um arquivo temporário
+                    credential_url = f"https://{username}:{token}@{domain}"
+                    with open(os.path.expanduser('~/.git-credentials'), 'w') as f:
+                        f.write(credential_url)
+                    
+                    flash('Credenciais do Git configuradas com sucesso!', 'success')
+                else:
+                    flash('URL do repositório inválida', 'danger')
+            else:
+                flash('Configurações básicas do Git salvas!', 'success')
+            
+            # Registrar atividade
+            ActivityLog.log_activity(
+                username=current_user.username,
+                activity='Configurou credenciais do Git',
+                ip_address=request.remote_addr,
+                user_id=current_user.id,
+                category='sistema'
+            )
+            
+            return redirect(url_for('security.config'))
+        
+        except Exception as e:
+            flash(f'Erro ao configurar Git: {str(e)}', 'danger')
+            return redirect(url_for('security.git_config'))
+    
+    # GET request - mostra formulário
+    return render_template('security/git_config.html')
+
     if user.username == 'admin':
         flash('Não é possível desativar o usuário administrador principal.', 'danger')
     else:

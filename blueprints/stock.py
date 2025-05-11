@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from app import db
-from models import StockItem, Supplier
+from models import StockItem, Supplier, ServiceOrder, OrderItem, ActivityLog
 from forms import StockItemForm, SearchForm
 from sqlalchemy import desc, func
 from datetime import datetime
+from utils import git_push_changes
 
 stock_bp = Blueprint('stock', __name__, url_prefix='/stock')
 
@@ -53,7 +54,25 @@ def create_item():
 
         db.session.add(item)
         db.session.commit()
-        flash('Item adicionado com sucesso!', 'success')
+
+        # Registrar atividade
+        ActivityLog.log_activity(
+            username=current_user.username,
+            activity=f'Adicionou item ao estoque: {item.name}',
+            ip_address=request.remote_addr,
+            user_id=current_user.id,
+            category='estoque'
+        )
+
+        # Enviar alterações para o git
+        git_message = f"Adicionado item ao estoque: {item.name} por {current_user.username}"
+        git_result = git_push_changes(git_message)
+
+        if git_result:
+            flash(f'Item "{item.name}" adicionado com sucesso ao estoque e enviado para o Git.', 'success')
+        else:
+            flash(f'Item "{item.name}" adicionado com sucesso ao estoque, mas houve um erro ao enviar para o Git.', 'warning')
+
         return redirect(url_for('stock.index'))
 
     return render_template('stock/create.html', form=form)
@@ -81,7 +100,25 @@ def edit_item(item_id):
         item.supplier_id = form.supplier_id.data if form.supplier_id.data != 0 else None
 
         db.session.commit()
-        flash('Item atualizado com sucesso!', 'success')
+
+        # Registrar atividade
+        ActivityLog.log_activity(
+            username=current_user.username,
+            activity=f'Atualizou item do estoque: {item.name}',
+            ip_address=request.remote_addr,
+            user_id=current_user.id,
+            category='estoque'
+        )
+
+        # Enviar alterações para o git
+        git_message = f"Atualizado item do estoque: {item.name} por {current_user.username}"
+        git_result = git_push_changes(git_message)
+
+        if git_result:
+            flash(f'Item "{item.name}" atualizado com sucesso e enviado para o Git.', 'success')
+        else:
+            flash(f'Item "{item.name}" atualizado com sucesso, mas houve um erro ao enviar para o Git.', 'warning')
+
         return redirect(url_for('stock.index'))
 
     return render_template('stock/edit.html', form=form, item=item)

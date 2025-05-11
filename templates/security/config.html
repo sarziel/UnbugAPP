@@ -77,7 +77,7 @@
                 </form>
             </div>
         </div>
-        
+
         <div class="card mb-4">
             <div class="card-header">
                 <h5 class="card-title mb-0">Segurança</h5>
@@ -108,7 +108,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6">
         <div class="card mb-4">
             <div class="card-header">
@@ -141,7 +141,7 @@
                 </form>
             </div>
         </div>
-        
+
         <div class="card mb-4">
             <div class="card-header">
                 <h5 class="card-title mb-0">Backup e Manutenção</h5>
@@ -186,17 +186,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Simulate saving
         const btn = this;
         const originalText = btn.innerHTML;
-        
+
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Salvando...';
-        
+
         setTimeout(() => {
             btn.innerHTML = '<i class="fas fa-check me-2"></i> Salvo!';
-            
+
             setTimeout(() => {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
-                
+
                 // Show success message
                 const alertEl = document.createElement('div');
                 alertEl.className = 'alert alert-success alert-dismissible fade show';
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <i class="fas fa-check-circle me-2"></i> Configurações salvas com sucesso!
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 `;
-                
+
                 document.querySelector('.content-header').after(alertEl);
             }, 1000);
         }, 1500);
