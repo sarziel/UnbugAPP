@@ -163,6 +163,7 @@ def create_app():
         from blueprints.employees import employees_bp
         from blueprints.clients import clients_bp
         from blueprints.security import security_bp
+        from blueprints.reports import reports_bp
         
         app.register_blueprint(auth_bp)
         app.register_blueprint(dashboard_bp)
@@ -172,6 +173,7 @@ def create_app():
         app.register_blueprint(employees_bp)
         app.register_blueprint(clients_bp)
         app.register_blueprint(security_bp)
+        app.register_blueprint(reports_bp)
         
         # Root route
         @app.route('/')

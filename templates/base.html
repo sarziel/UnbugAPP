@@ -95,6 +95,14 @@
             {% if current_user.has_security_access() %}
             <li class="nav-item-header">Sistema</li>
 
+            {% if current_user.is_management() %}
+            <li class="nav-item">
+                <a href="{{ url_for('reports.index') }}" class="{% if request.path.startswith('/reports') %}active{% endif %}">
+                    <i class="fas fa-file-alt"></i> Relatórios
+                </a>
+            </li>
+            {% endif %}
+
             <li class="nav-item">
                 <a href="{{ url_for('security.index') }}" class="{% if request.path.startswith('/security') %}active{% endif %}">
                     <i class="fas fa-shield-alt"></i> Segurança
