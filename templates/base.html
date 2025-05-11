@@ -209,35 +209,37 @@
         <footer class="mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="footer-logo-container mb-2">
                         <img src="{{ url_for('static', filename='img/unbug_horizontal.png') }}" alt="Unbug Solutions TI" class="footer-logo">
                     </div>
                     <p>Soluções inteligentes para sua empresa.</p>
+                    <p><i class="fas fa-envelope me-2"></i>unbibugsolutionsti@gmail.com</p>
+                    <p><i class="fas fa-phone me-2"></i>(28) 99992-8442</p>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <h5>Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
-                        <li><a href="{{ url_for('orders.index') }}">Ordens</a></li>
-                        <li><a href="{{ url_for('clients.index') }}">Clientes</a></li>
-                        <li><a href="{{ url_for('stock.index') }}">Almoxarifado</a></li>
+                        <li><a href="{{ url_for('dashboard.index') }}"><i class="fas fa-chart-line me-2"></i>Dashboard</a></li>
+                        <li><a href="{{ url_for('orders.index') }}"><i class="fas fa-tasks me-2"></i>Ordens</a></li>
+                        <li><a href="{{ url_for('clients.index') }}"><i class="fas fa-users me-2"></i>Clientes</a></li>
+                        <li><a href="{{ url_for('stock.index') }}"><i class="fas fa-boxes me-2"></i>Almoxarifado</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3">
-                    <h5>Contato</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="mailto:contato@unbugsolutions.com"><i class="fas fa-envelope me-2"></i>contato@unbugsolutions.com</a></li>
-                        <li><a href="#"><i class="fas fa-phone me-2"></i>(00) 1234-5678</a></li>
-                        <li><a href="#"><i class="fab fa-linkedin me-2"></i>LinkedIn</a></li>
-                        <li><a href="#"><i class="fab fa-github me-2"></i>GitHub</a></li>
+                <div class="col-md-4">
+                    <h5>Redes Sociais</h5>
+                    <ul class="list-unstyled social-links">
+                        <li><a href="https://facebook.com/unbugsolutionsti" target="_blank"><i class="fab fa-facebook me-2"></i>Facebook</a></li>
+                        <li><a href="https://tiktok.com/@unbugsolutionsti" target="_blank"><i class="fab fa-tiktok me-2"></i>TikTok</a></li>
+                        <li><a href="https://instagram.com/unbugsolutionsti" target="_blank"><i class="fab fa-instagram me-2"></i>Instagram</a></li>
+                        <li><a href="https://youtube.com/unbugsolutionsti" target="_blank"><i class="fab fa-youtube me-2"></i>YouTube</a></li>
                     </ul>
                 </div>
             </div>
             <hr>
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <p>&copy; 2025 Unbug Solutions TI. Todos os direitos reservados.</p>
+                    <p>&copy; 2025 UnBug Solutions TI. Todos os direitos reservados.</p>
                 </div>
             </div>
         </div>
