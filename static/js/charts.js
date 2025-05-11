@@ -354,6 +354,51 @@ function initFinanceCharts() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM carregado, verificando gráficos para inicializar");
 
+    // Configurar botões da página de segurança
+    if (document.getElementById('backup-btn')) {
+        document.getElementById('backup-btn').addEventListener('click', function() {
+            // Simular backup
+            fetch('/security/backup', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Backup realizado com sucesso!');
+                } else {
+                    alert('Erro ao realizar backup: ' + data.message);
+                }
+            });
+        });
+    }
+
+    if (document.getElementById('log-btn')) {
+        document.getElementById('log-btn').addEventListener('click', function() {
+            fetch('/security/logs')
+            .then(response => response.json())
+            .then(data => {
+                alert('Logs do sistema:\n\n' + data.logs.join('\n'));
+            });
+        });
+    }
+
+    if (document.getElementById('security-scan') || document.getElementById('check-security-btn')) {
+        const scanButton = document.getElementById('security-scan') || document.getElementById('check-security-btn');
+        scanButton.addEventListener('click', function() {
+            fetch('/security/scan', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                let message = 'Resultados da verificação de segurança:\n\n';
+                data.results.forEach(result => {
+                    message += `[${result.status.toUpperCase()}] ${result.message}\n`;
+                });
+                alert(message);
+            });
+        });
+    }
+
     // Inicializa gráficos do dashboard se estiverem presentes
     if (document.getElementById('serviceOrderStatusChart') || 
         document.getElementById('projectStatusChart') || 
