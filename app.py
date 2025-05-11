@@ -27,20 +27,20 @@ login_manager = LoginManager()
 def create_app():
     # Create Flask app
     app = Flask(__name__)
-    
+
     # Email configuration
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USERNAME'] = 'unbugsolutionsti@gmail.com'
     app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-    
+
     # Initialize Mail
     from blueprints.orders import mail
     mail.init_app(app)
     app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
     app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
-    
+
     # Configure database
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///unbug.db")
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
@@ -52,18 +52,18 @@ def create_app():
     }
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SQLALCHEMY_ECHO"] = True  # Log SQL queries for debugging
-    
+
     # Initialize extensions with app
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Por favor, faça login para acessar esta página.'
     login_manager.login_message_category = 'warning'
-    
+
     with app.app_context():
         # Import models
         from models import User, Employee, Client, Supplier, ServiceOrder, Project, StockItem, StoreItem, FinancialEntry
-        
+
         # Create or update database tables
         try:
             with app.app_context():
@@ -77,11 +77,11 @@ def create_app():
         except Exception as e:
             app.logger.error(f"Database initialization error: {str(e)}")
             db.session.rollback()
-        
+
         # Create admin user if not exists
         from werkzeug.security import generate_password_hash
         from datetime import datetime
-        
+
         admin = User.query.filter_by(username='admin').first()
         if not admin:
             admin = User(
@@ -92,7 +92,7 @@ def create_app():
             )
             db.session.add(admin)
             db.session.flush()  # Para obter o ID do admin
-            
+
             # Criar funcionário para o admin
             admin_employee = Employee(
                 first_name='João',
@@ -105,7 +105,7 @@ def create_app():
                 user_id=admin.id
             )
             db.session.add(admin_employee)
-            
+
             # Add predefined users
             users = [
                 User(username='ceounbug', password_hash=generate_password_hash('unbug123'), 
@@ -117,7 +117,7 @@ def create_app():
             ]
             db.session.add_all(users)
             db.session.flush()  # Para obter IDs dos usuários
-            
+
             # Criar funcionários para os demais usuários
             employees = [
                 Employee(
@@ -153,7 +153,7 @@ def create_app():
             ]
             db.session.add_all(employees)
             db.session.commit()
-        
+
         # Register blueprints
         from blueprints.auth import auth_bp
         from blueprints.dashboard import dashboard_bp
@@ -164,7 +164,7 @@ def create_app():
         from blueprints.clients import clients_bp
         from blueprints.security import security_bp
         from blueprints.reports import reports_bp
-        
+
         app.register_blueprint(auth_bp)
         app.register_blueprint(dashboard_bp)
         app.register_blueprint(orders_bp)
@@ -174,25 +174,25 @@ def create_app():
         app.register_blueprint(clients_bp)
         app.register_blueprint(security_bp)
         app.register_blueprint(reports_bp)
-        
+
         # Root route
         @app.route('/')
         def index():
             if current_user.is_authenticated:
                 return redirect(url_for('dashboard.index'))
             return redirect(url_for('auth.login'))
-            
+
         @login_manager.user_loader
         def load_user(user_id):
             from models import User
             return User.query.get(int(user_id))
-            
+
         # Error handlers
         @app.errorhandler(Exception)
         def handle_error(error):
             app.logger.error(f'Unhandled error: {str(error)}')
             return 'Internal server error', 500
-            
+
         return app
 
 app = create_app()
