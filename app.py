@@ -66,17 +66,13 @@ def create_app():
 
         # Create or update database tables
         try:
-            with app.app_context():
-                db.create_all()
-                # Enable automatic table updates
-                for table in db.metadata.tables.values():
-                    for column in table.columns:
-                        column.nullable = True
-                db.session.commit()
-                app.logger.info("Database tables created/updated successfully")
+            db.create_all()
+            db.session.commit()
+            app.logger.info("Database tables created/updated successfully")
         except Exception as e:
             app.logger.error(f"Database initialization error: {str(e)}")
             db.session.rollback()
+            raise
 
         # Create admin user if not exists
         from werkzeug.security import generate_password_hash
