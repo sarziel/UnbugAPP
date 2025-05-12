@@ -143,6 +143,7 @@ def new_user():
     return render_template('security/user_form.html', form=form, title="Novo Usuário")
 
 
+@security_bp.route('/user/edit/<int:id>', methods=['GET', 'POST'])
 def edit_user(id):
     """Editar usuário existente"""
     user = User.query.get_or_404(id)
